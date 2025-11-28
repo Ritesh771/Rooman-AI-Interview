@@ -225,6 +225,35 @@ The application follows a modern web architecture with:
 - Implement real-time notifications
 - Add data export features
 
+## Screenshots
+
+### Landing Page
+![Landing Page](/images/landing%20page.png)
+![Landing Page 2](/images/landing%20page2.png)
+
+### Authentication
+![Login Page](/images/login%20page%20.png)
+
+### Dashboard & Interview Management
+![Dashboard](/images/dashboard.png)
+![Create Interview](/images/create%20interview.png)
+![Interview History](/images/interview%20history.png)
+
+### Interview Types
+
+#### Voice Interview
+![Voice Interview](/images/voice%20interview.png)
+
+#### Coding Interview
+![Coding Terminal](/images/coding%20terminal.png)
+![Coding Question](/images/coding%20question.png)
+
+#### AI Resume Scoring
+![AI Resume Score](/images/ai%20resume%20score.png)
+
+### Profile & Resume
+![Profile Resume](/images/profile%20resume.png)
+
 ## Contributing
 
 1. Fork the repository
