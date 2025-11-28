@@ -20,6 +20,24 @@ interface ProfileData {
   certifications?: string
 }
 
+// Add interface for score data
+interface ScoreData {
+  score: number;
+  maxScore: number;
+  analysis: string;
+  strengths: string[];
+  weaknesses: string[];
+  recommendations: string[];
+  sections: {
+    summary: { score: number; maxScore: number; feedback: string };
+    experience: { score: number; maxScore: number; feedback: string };
+    projects: { score: number; maxScore: number; feedback: string };
+    skills: { score: number; maxScore: number; feedback: string };
+    education: { score: number; maxScore: number; feedback: string };
+    certifications: { score: number; maxScore: number; feedback: string };
+  };
+}
+
 const chartConfig = {
   completion: {
     label: "Profile Completion"
@@ -48,6 +66,9 @@ const CompleteProfileTab = () => {
     education: '',
     certifications: ''
   })
+  // Add state for score data
+  const [scoreData, setScoreData] = useState<ScoreData | null>(null)
+  const [isScoring, setIsScoring] = useState(false)
 
   const handleAIParsing = async () => {
     if (!rawProfileText.trim()) {
@@ -165,14 +186,46 @@ const CompleteProfileTab = () => {
   const totalFields = 6
   const progressPercentage = Math.round((filledFields / totalFields) * 100)
 
+  // Add function to calculate resume score
+  const calculateResumeScore = async () => {
+    if (!hasData) {
+      toast.error('Please complete your profile first')
+      return
+    }
+
+    setIsScoring(true)
+    try {
+      const response = await fetch('/api/profile/score', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ profileData: formData })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setScoreData(data.scoreResult)
+        toast.success('Resume scored successfully!')
+      } else {
+        toast.error('Failed to score resume')
+      }
+    } catch (error) {
+      console.error('Error scoring resume:', error)
+      toast.error('Error scoring resume')
+    } finally {
+      setIsScoring(false)
+    }
+  }
+
   if (!isEditing && hasData) {
-    // View mode
+    // View mode - Show only the score card as requested
     return (
       <div className='w-full flex flex-col gap-6 pb-10 xl:pb-0 overflow-auto md:overflow-y-none'>
         <div className='flex justify-between items-center'>
           <div>
-            <h2 className='text-3xl font-bold text-gray-900'>Your Profile</h2>
-            <p className='text-gray-600 mt-1'>Your professional information and achievements</p>
+            <h2 className='text-3xl font-bold text-gray-900'>Your Profile Score</h2>
+            <p className='text-gray-600 mt-1'>AI-powered analysis of your resume</p>
           </div>
           <div className='flex items-center gap-2'>
             <SignOutButton />
@@ -182,184 +235,191 @@ const CompleteProfileTab = () => {
           </div>
         </div>
 
-        {/* Profile Completion Progress */}
-        <Card className='shadow-sm flex z-10 flex-col gap-0 w-[240px] h-[240px] bg-white/60 rounded-4xl'>
-          <CardHeader className="items-center pb-1">
-            <CardTitle className="text-base">Profile Completion</CardTitle>
-          </CardHeader>
-          <CardContent className="p-2 flex-1 flex flex-col">
-            <div className="flex items-center gap-3 mb-2 flex-1">
-              <ChartContainer
-                config={chartConfig}
-                className="flex-1 aspect-square max-h-[80px]"
-              >
-                <RadialBarChart
-                  data={[
-                    { type: "completion", visitors: progressPercentage, fill: "hsl(var(--chart-1))" },
-                    { type: "remaining", visitors: 100 - progressPercentage, fill: "hsl(var(--chart-2))" },
-                  ]}
-                  innerRadius={20}
-                  outerRadius={40}
+        {/* Profile Completion Progress and Resume Score Card */}
+        <div className='flex flex-wrap gap-6'>
+          {/* Profile Completion Progress */}
+          <Card className='shadow-sm flex z-10 flex-col gap-0 w-[240px] h-[240px] bg-white/60 rounded-4xl'>
+            <CardHeader className="items-center pb-1">
+              <CardTitle className="text-base">Profile Completion</CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 flex-1 flex flex-col">
+              <div className="flex items-center gap-3 mb-2 flex-1">
+                <ChartContainer
+                  config={chartConfig}
+                  className="flex-1 aspect-square max-h-[80px]"
                 >
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent hideLabel nameKey="type" />}
-                  />
-                  <RadialBar dataKey="visitors" background={false} />
-                </RadialBarChart>
-              </ChartContainer>
-              <div className="flex-1 text-center">
-                <span className='text-xl font-bold text-gray-900'>{progressPercentage}%</span>
-                <p className='text-xs text-gray-600'>Complete</p>
+                  <RadialBarChart
+                    data={[
+                      { type: "completion", visitors: progressPercentage, fill: "hsl(var(--chart-1))" },
+                      { type: "remaining", visitors: 100 - progressPercentage, fill: "hsl(var(--chart-2))" },
+                    ]}
+                    innerRadius={20}
+                    outerRadius={40}
+                  >
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent hideLabel nameKey="type" />}
+                    />
+                    <RadialBar dataKey="visitors" background={false} />
+                  </RadialBarChart>
+                </ChartContainer>
+                <div className="flex-1 text-center">
+                  <span className='text-xl font-bold text-gray-900'>{progressPercentage}%</span>
+                  <p className='text-xs text-gray-600'>Complete</p>
+                </div>
               </div>
-            </div>
 
-            {/* User Details */}
-            <div className="space-y-1 text-xs flex-1">
-              {userData && (
+              {/* User Details */}
+              <div className="space-y-1 text-xs flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Name:</span>
-                  <span className="font-medium text-gray-900 truncate ml-1">{userData.name || 'N/A'}</span>
+                  <span className="text-gray-600">Interviews:</span>
+                  <span className="font-medium text-gray-900">{interviewStats.total}</span>
                 </div>
-              )}
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Interviews:</span>
-                <span className="font-medium text-gray-900">{interviewStats.total}</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Completed:</span>
+                  <span className="font-medium text-green-600">{interviewStats.completed}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">In Progress:</span>
+                  <span className="font-medium text-blue-600">{interviewStats.inProgress}</span>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Completed:</span>
-                <span className="font-medium text-green-600">{interviewStats.completed}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">In Progress:</span>
-                <span className="font-medium text-blue-600">{interviewStats.inProgress}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <div className='space-y-6'>
-          {/* Professional Summary */}
-          {formData.summary && (
-            <Card className='border-l-4 border-l-blue-500 shadow-sm'>
-              <CardHeader className='pb-3'>
-                <CardTitle className='text-xl text-blue-900 flex items-center gap-2'>
-                  <div className='w-2 h-2 bg-blue-500 rounded-full'></div>
-                  Professional Summary
-                </CardTitle>
+          {/* Resume Score Card */}
+          {scoreData ? (
+            <Card className='shadow-sm flex z-10 flex-col gap-0 w-[240px] h-[240px] bg-white/60 rounded-4xl'>
+              <CardHeader className="items-center pb-1">
+                <CardTitle className="text-base">Resume Score</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className='text-gray-700 leading-relaxed whitespace-pre-wrap'>{formData.summary}</p>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Skills */}
-          {formData.skills && (
-            <Card className='border-l-4 border-l-green-500 shadow-sm'>
-              <CardHeader className='pb-3'>
-                <CardTitle className='text-xl text-green-900 flex items-center gap-2'>
-                  <div className='w-2 h-2 bg-green-500 rounded-full'></div>
-                  Skills & Technologies
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='flex flex-wrap gap-2'>
-                  {formData.skills.split(',').map((skill, index) => (
-                    <span
-                      key={index}
-                      className='px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium border border-green-200 hover:bg-green-200 transition-colors'
+              <CardContent className="p-2 flex-1 flex flex-col">
+                <div className="flex items-center gap-3 mb-2 flex-1">
+                  <ChartContainer
+                    config={chartConfig}
+                    className="flex-1 aspect-square max-h-[80px]"
+                  >
+                    <RadialBarChart
+                      data={[
+                        { type: "score", visitors: scoreData.score, fill: "hsl(var(--chart-1))" },
+                        { type: "remaining", visitors: scoreData.maxScore - scoreData.score, fill: "hsl(var(--chart-2))" },
+                      ]}
+                      innerRadius={20}
+                      outerRadius={40}
                     >
-                      {skill.trim()}
-                    </span>
-                  ))}
+                      <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent hideLabel nameKey="type" />}
+                      />
+                      <RadialBar dataKey="visitors" background={false} />
+                    </RadialBarChart>
+                  </ChartContainer>
+                  <div className="flex-1 text-center">
+                    <span className='text-xl font-bold text-gray-900'>{scoreData.score}/{scoreData.maxScore}</span>
+                    <p className='text-xs text-gray-600'>Score</p>
+                  </div>
+                </div>
+
+                <div className="space-y-1 text-xs flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Strengths:</span>
+                    <span className="font-medium text-green-600">{scoreData.strengths.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Areas to Improve:</span>
+                    <span className="font-medium text-yellow-600">{scoreData.weaknesses.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Recommendations:</span>
+                    <span className="font-medium text-blue-600">{scoreData.recommendations.length}</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
-          )}
-
-          {/* Work Experience */}
-          {formData.workExperience && (
-            <Card className='border-l-4 border-l-purple-500 shadow-sm'>
-              <CardHeader className='pb-3'>
-                <CardTitle className='text-xl text-purple-900 flex items-center gap-2'>
-                  <div className='w-2 h-2 bg-purple-500 rounded-full'></div>
-                  Work Experience
-                </CardTitle>
+          ) : (
+            <Card className='shadow-sm flex z-10 flex-col gap-0 w-[240px] h-[240px] bg-white/60 rounded-4xl'>
+              <CardHeader className="items-center pb-1">
+                <CardTitle className="text-base">Resume Score</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className='text-gray-700 leading-relaxed whitespace-pre-wrap bg-gray-50 p-4 rounded-lg'>
-                  {formData.workExperience}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Projects */}
-          {formData.projects && (
-            <Card className='border-l-4 border-l-orange-500 shadow-sm'>
-              <CardHeader className='pb-3'>
-                <CardTitle className='text-xl text-orange-900 flex items-center gap-2'>
-                  <div className='w-2 h-2 bg-orange-500 rounded-full'></div>
-                  Key Projects
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='text-gray-700 leading-relaxed whitespace-pre-wrap bg-gray-50 p-4 rounded-lg'>
-                  {formData.projects}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Education Timeline */}
-          {formData.education && (
-            <Card className='border-l-4 border-l-indigo-500 shadow-sm'>
-              <CardHeader className='pb-3'>
-                <CardTitle className='text-xl text-indigo-900 flex items-center gap-2'>
-                  <div className='w-2 h-2 bg-indigo-500 rounded-full'></div>
-                  Education
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='space-y-4'>
-                  {formData.education.split('\n').filter(line => line.trim()).map((education, index) => (
-                    <div key={index} className='flex items-start gap-4'>
-                      <div className='flex flex-col items-center'>
-                        <div className='w-3 h-3 bg-indigo-500 rounded-full border-2 border-white shadow-sm'></div>
-                        {index < formData.education!.split('\n').filter(line => line.trim()).length - 1 && (
-                          <div className='w-0.5 h-12 bg-indigo-200 mt-2'></div>
-                        )}
-                      </div>
-                      <div className='flex-1 pb-4'>
-                        <div className='bg-indigo-50 p-3 rounded-lg border border-indigo-100'>
-                          <p className='text-gray-800 font-medium'>{education.trim()}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Certifications */}
-          {formData.certifications && (
-            <Card className='border-l-4 border-l-red-500 shadow-sm'>
-              <CardHeader className='pb-3'>
-                <CardTitle className='text-xl text-red-900 flex items-center gap-2'>
-                  <div className='w-2 h-2 bg-red-500 rounded-full'></div>
-                  Certifications
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='text-gray-700 leading-relaxed whitespace-pre-wrap bg-gray-50 p-4 rounded-lg'>
-                  {formData.certifications}
-                </div>
+              <CardContent className="p-2 flex-1 flex flex-col items-center justify-center">
+                <p className="text-sm text-gray-600 mb-4 text-center">Get your resume scored by AI</p>
+                <Button 
+                  onClick={calculateResumeScore} 
+                  disabled={isScoring}
+                  className='bg-purple-600 hover:bg-purple-700'
+                >
+                  {isScoring ? 'Scoring...' : 'Score Resume'}
+                </Button>
               </CardContent>
             </Card>
           )}
         </div>
+
+        {/* Score Details Modal */}
+        {scoreData && (
+          <Card className='shadow-sm'>
+            <CardHeader>
+              <div className='flex justify-between items-center'>
+                <CardTitle className='text-xl'>Resume Analysis</CardTitle>
+                <Button 
+                  variant='outline' 
+                  onClick={() => setScoreData(null)}
+                >
+                  Close Analysis
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className='mb-6'>
+                <h3 className='text-lg font-semibold mb-2'>Overall Score: {scoreData.score}/{scoreData.maxScore}</h3>
+                <p className='text-gray-700'>{scoreData.analysis}</p>
+              </div>
+
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <h4 className='font-semibold mb-2 text-green-700'>Strengths</h4>
+                  <ul className='list-disc pl-5 space-y-1'>
+                    {scoreData.strengths.map((strength, index) => (
+                      <li key={index} className='text-gray-700'>{strength}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className='font-semibold mb-2 text-yellow-700'>Areas for Improvement</h4>
+                  <ul className='list-disc pl-5 space-y-1'>
+                    {scoreData.weaknesses.map((weakness, index) => (
+                      <li key={index} className='text-gray-700'>{weakness}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className='mt-6'>
+                <h4 className='font-semibold mb-2 text-blue-700'>Recommendations</h4>
+                <ul className='list-disc pl-5 space-y-1'>
+                  {scoreData.recommendations.map((recommendation, index) => (
+                    <li key={index} className='text-gray-700'>{recommendation}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className='mt-6'>
+                <h4 className='font-semibold mb-3'>Section Scores</h4>
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
+                  {Object.entries(scoreData.sections).map(([section, data]) => (
+                    <Card key={section} className='p-3'>
+                      <div className='flex justify-between items-center'>
+                        <span className='font-medium capitalize'>{section}</span>
+                        <span className='text-sm'>{data.score}/{data.maxScore}</span>
+                      </div>
+                      <p className='text-xs text-gray-600 mt-1'>{data.feedback}</p>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     )
   }
@@ -411,24 +471,18 @@ const CompleteProfileTab = () => {
 
           {/* User Details */}
           <div className="space-y-1 text-xs flex-1">
-            {userData && (
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Name:</span>
-                <span className="font-medium text-gray-900 truncate ml-1">{userData.name || 'N/A'}</span>
-              </div>
-            )}
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Interviews:</span>
               <span className="font-medium text-gray-900">{interviewStats.total}</span>
             </div>
             <div className="flex items-center justify-between">
-                <span className="text-gray-600">Completed:</span>
-                <span className="font-medium text-green-600">{interviewStats.completed}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">In Progress:</span>
-                <span className="font-medium text-blue-600">{interviewStats.inProgress}</span>
-              </div>
+              <span className="text-gray-600">Completed:</span>
+              <span className="font-medium text-green-600">{interviewStats.completed}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600">In Progress:</span>
+              <span className="font-medium text-blue-600">{interviewStats.inProgress}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
