@@ -74,7 +74,7 @@ const mockInterviewQuestions: (Question | Question[])[] = [
         label: "Interview Type",
         name: "interviewType",
         type: "select",
-        options: ["Regular", "Coding"],
+        options: ["Regular", "Coding", "Gemini"],
         defaultOption: "Regular",
     }
 ];
@@ -162,8 +162,7 @@ const CreateInterviewForm = () => {
                                                         required
                                                     />
                                                 ) : (
-                                                    question.type === "select" &&
-                                                    Array.isArray(question.options) && (
+                                                    question.type === "select" && Array.isArray(question.options) && (
                                                         <Select name={question.name} required defaultValue={question.defaultOption}>
                                                             <SelectTrigger className="w-full">
                                                                 <SelectValue placeholder={question.defaultOption} />

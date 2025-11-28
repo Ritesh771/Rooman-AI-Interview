@@ -41,11 +41,17 @@ export async function handleCreateInterviewFormAction(
     // Check if this is a coding interview
     const interviewType = formData.get("interviewType") || "Regular";
     const isCodingInterview = interviewType === "Coding";
+    const isGeminiInterview = interviewType === "Gemini";
     
     // Determine which API endpoint to use
-    const apiUrl = isCodingInterview 
-      ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/interview/create-coding`
-      : `${process.env.NEXT_PUBLIC_BASE_URL}/api/interview/create`;
+    let apiUrl;
+    if (isCodingInterview) {
+      apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/interview/create-coding`;
+    } else if (isGeminiInterview) {
+      apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/interview/gemini`;
+    } else {
+      apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/interview/create`;
+    }
 
     const createInterviewRes = await fetch(apiUrl, {
       method: "POST",
@@ -58,9 +64,12 @@ export async function handleCreateInterviewFormAction(
     if (createInterviewRes.ok) {
       return { success: true };
     } else {
+      const errorData = await createInterviewRes.json();
+      console.error("API Error:", errorData);
       return { success: false };
     }
   } catch (e) {
+    console.error("Form Action Error:", e);
     return { success: false };
   }
 }
