@@ -10,7 +10,7 @@ import { UseQueryResult } from '@tanstack/react-query';
 export type InterviewHistoryType = {
   id: string;
   name: string;
-  createdAt: Date;
+  createdAt: string; // ISO string from API
   role: string;
   type: string;
   difficultyLevel: string;
@@ -182,7 +182,12 @@ export const columns: ColumnDef<InterviewHistoryType>[] = [
       );
     },
     enableSorting: true,
-    cell: ({ row }) => <div className="lowercase">{(new Date(row.getValue<Date>("createdAt"))).toLocaleDateString()}</div>,
+    sortingFn: (rowA, rowB) => {
+      const dateA = new Date(rowA.getValue<string>("createdAt"));
+      const dateB = new Date(rowB.getValue<string>("createdAt"));
+      return dateA.getTime() - dateB.getTime();
+    },
+    cell: ({ row }) => <div className="lowercase">{(new Date(row.getValue<string>("createdAt"))).toLocaleDateString()}</div>,
     size: 100
 
   },

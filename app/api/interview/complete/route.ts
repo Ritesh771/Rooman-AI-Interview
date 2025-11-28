@@ -1,11 +1,11 @@
 import { auth } from "@/app/(auth-pages)/auth";
 import { SavedMessage } from "@/app/components/interview/interview-body";
-import { prisma } from "@/prisma/prisma";
+import { createInterviewFeedback, updateInterview } from "@/lib/firebase-data";
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   const data = await req.json();
 
   const conversation = (data.conservation as SavedMessage[])
@@ -62,24 +62,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         timeManagement: feedbackObject.TimeManagement,
       };
 
-      await prisma.interviewFeedback.create({
-        data: {
-          ...feedBackData,
-        },
-      });
+      await createInterviewFeedback(feedBackData);
 
-      let interviewUpdateData = await prisma.interview.findUnique({
-        where: { id: data.id },
-      });
-
-      if (interviewUpdateData) {
-        await prisma.interview.update({
-          where: { id: data.id },
-          data: {
-            isCompleted: true,
-          },
-        });
-      }
+      // Update the interview status to completed
+      await updateInterview(data.id, { isCompleted: true });
 
       return Response.json({ status: 200 });
     }

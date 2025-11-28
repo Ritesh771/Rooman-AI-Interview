@@ -70,6 +70,29 @@ const CompleteProfileTab = () => {
   const [scoreData, setScoreData] = useState<ScoreData | null>(null)
   const [isScoring, setIsScoring] = useState(false)
 
+  const saveProfile = async (profileData: ProfileData) => {
+    try {
+      const response = await fetch('/api/profile/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(profileData)
+      })
+      if (response.ok) {
+        loadProfile() // Reload to show updated data
+        return true
+      } else {
+        toast.error('Failed to save profile')
+        return false
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error)
+      toast.error('Error saving profile')
+      return false
+    }
+  }
+
   const handleAIParsing = async () => {
     if (!rawProfileText.trim()) {
       toast.error('Please enter profile text to parse')
@@ -89,7 +112,9 @@ const CompleteProfileTab = () => {
       if (response.ok) {
         const data = await response.json()
         setFormData(data.structuredProfile)
-        toast.success('Profile structured successfully!')
+        // Automatically save the parsed profile
+        await saveProfile(data.structuredProfile)
+        toast.success('Profile structured and saved successfully!')
       } else {
         toast.error('Failed to structure profile')
       }
@@ -151,27 +176,10 @@ const CompleteProfileTab = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Submitting form data:", formData)
-    try {
-      const response = await fetch('/api/profile/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-      console.log("Response:", response)
-      if (response.ok) {
-        toast.success('Profile updated successfully!')
-        setIsEditing(false)
-        loadProfile() // Reload to show updated data
-      } else {
-        const error = await response.json()
-        console.log("Error:", error)
-        toast.error('Failed to update profile')
-      }
-    } catch (error) {
-      console.log("Fetch error:", error)
-      toast.error('Error updating profile')
+    const success = await saveProfile(formData)
+    if (success) {
+      toast.success('Profile updated successfully!')
+      setIsEditing(false)
     }
   }
 
@@ -179,10 +187,11 @@ const CompleteProfileTab = () => {
     return <div>Loading profile...</div>
   }
 
-  const hasData = Object.values(formData).some(value => value && value.trim() !== '')
+  const profileFields = ['summary', 'workExperience', 'projects', 'skills', 'education', 'certifications']
+  const hasData = profileFields.some(field => formData[field as keyof ProfileData] && typeof formData[field as keyof ProfileData] === 'string' && (formData[field as keyof ProfileData] as string).trim() !== '')
 
   // Calculate profile completion percentage
-  const filledFields = Object.values(formData).filter(value => value && value.trim() !== '').length
+  const filledFields = profileFields.filter(field => formData[field as keyof ProfileData] && typeof formData[field as keyof ProfileData] === 'string' && (formData[field as keyof ProfileData] as string).trim() !== '').length
   const totalFields = 6
   const progressPercentage = Math.round((filledFields / totalFields) * 100)
 

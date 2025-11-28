@@ -46,7 +46,7 @@ export default function GeminiInterviewPage({ params }: { params: { id: string }
   const [showHints, setShowHints] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [evaluation, setEvaluation] = useState<InterviewEvaluation | null>(null);
-  const [timeRemaining, setTimeRemaining] = useState(3600); // 60 minutes in seconds
+  const [timeRemaining, setTimeRemaining] = useState(0); // Will be set based on number of questions
 
   useEffect(() => {
     const fetchInterviewData = async () => {
@@ -60,12 +60,20 @@ export default function GeminiInterviewPage({ params }: { params: { id: string }
         }
         
         // Extract the Gemini interview data from the questions field
+        let interview;
         if (data.questions && typeof data.questions === 'object' && data.questions.questions) {
-          setInterviewData(data.questions);
+          interview = data.questions;
         } else {
           // Handle case where questions might be directly in the data object
-          setInterviewData(data);
+          interview = data;
         }
+        
+        setInterviewData(interview);
+        
+        // Set timer based on number of questions (2 minutes per question)
+        const noOfQuestions = interview.noOfQuestions || 5;
+        const totalTime = noOfQuestions * 2 * 60; // 2 minutes per question in seconds
+        setTimeRemaining(totalTime);
       } catch (err: any) {
         setError(err.message);
       } finally {

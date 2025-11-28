@@ -18,10 +18,10 @@ export default {
 
         try {
           const User = await getUserByEmail(credentials.email as string);
-          if (!User) return null;
+          if (!User || !User.password) return null;
 
           const isValidUserCredentials = await compareHash(
-            User?.password as string,
+            User.password,
             credentials.password as string
           );
 

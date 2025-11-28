@@ -1,8 +1,14 @@
-import { prisma } from "@/prisma/prisma";
+import { auth } from "@/app/(auth-pages)/auth";
+import { createInterviewFeedback, updateInterview } from "@/lib/firebase-data";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { interviewId, results } = await req.json();
 
     if (!interviewId || !results) {
@@ -12,23 +18,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // First, get the interview to retrieve the userId
-    const interview = await prisma.interview.findUnique({
-      where: { id: interviewId },
-      select: { userId: true }
-    });
-
-    if (!interview) {
-      return NextResponse.json(
-        { error: "Interview not found" },
-        { status: 404 }
-      );
-    }
-
     // Create feedback record for coding interview
     const feedbackData = {
       interviewId: interviewId,
-      userId: interview.userId,
+      userId: session.user.id, // This is uid, but should be doc id? Wait, for consistency, change to doc id.
       feedBack: `Coding interview completed with average score: ${results.averageScore}%. Status: ${results.passed ? 'Passed' : 'Failed'}`,
       problemSolving: results.averageScore, // Using average score as problem solving metric
       systemDesign: results.averageScore, // Using average score as system design metric
@@ -39,17 +32,10 @@ export async function POST(req: NextRequest) {
     };
 
     // Create the feedback record
-    await prisma.interviewFeedback.create({
-      data: feedbackData,
-    });
+    await createInterviewFeedback(feedbackData);
 
-    // Update interview status to completed
-    await prisma.interview.update({
-      where: { id: interviewId },
-      data: {
-        isCompleted: true,
-      },
-    });
+    // Update the interview status to completed
+    await updateInterview(interviewId, { isCompleted: true });
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

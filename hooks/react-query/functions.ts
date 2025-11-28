@@ -1,7 +1,7 @@
 type interviewsType = {
   name: string;
   id: string;
-  createdAt: Date;
+  createdAt: string; // ISO string from API
   type: string;
   role: string;
   difficultyLevel: string;

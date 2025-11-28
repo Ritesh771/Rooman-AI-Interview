@@ -1,6 +1,6 @@
 import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
-import { prisma } from "@/prisma/prisma";
+import { createInterview } from "@/lib/firebase-data";
 
 export async function POST(req: Request, res: Response) {
   const {
@@ -57,10 +57,8 @@ export async function POST(req: Request, res: Response) {
       ) as string[],
     };
 
-    await prisma.interview.create({
-      data: {
-        ...interviewData,
-      },
+    await createInterview({
+      ...interviewData,
     });
 
     return Response.json({ success: true }, { status: 200 });

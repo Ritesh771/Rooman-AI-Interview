@@ -1,5 +1,5 @@
 import { auth } from "@/app/(auth-pages)/auth";
-import { prisma } from "@/prisma/prisma";
+import { getUserById } from "@/lib/firebase-data";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -9,17 +9,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        summary: true,
-        workExperience: true,
-        projects: true,
-        skills: true,
-        education: true,
-        certifications: true,
-      },
-    });
+    const user = await getUserById(session.user.id);
 
     return NextResponse.json({ profile: user });
   } catch (error) {

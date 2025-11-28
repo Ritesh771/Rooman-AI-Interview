@@ -8,13 +8,22 @@ const CodingInterview = ({ interviewData, onComplete }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [testResults, setTestResults] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes
+    const [timeLeft, setTimeLeft] = useState(0); // Will be set based on number of challenges
     const [scores, setScores] = useState([]);
     const [roomId, setRoomId] = useState("interview-" + Date.now());
     
     const editorRef = useRef(null);
     const manualInputRef = useRef("");
     const currentChallenge = interviewData.challenges[currentQuestionIndex];
+    
+    // Set initial time based on number of challenges (8 minutes per challenge)
+    useEffect(() => {
+        if (interviewData && interviewData.challenges) {
+            const numChallenges = interviewData.challenges.length;
+            const totalTime = numChallenges * 8 * 60; // 8 minutes per challenge in seconds
+            setTimeLeft(totalTime);
+        }
+    }, [interviewData]);
     
     // Timer effect
     useEffect(() => {

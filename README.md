@@ -28,6 +28,10 @@ A modern AI-powered interview platform that simulates real job interviews using 
 - **Validation**: Zod
 - **Code Platform**: Monaco Editor, WebSocket for real-time collaboration
 
+## Database Architecture
+
+This project now uses Firebase as the sole database backend, replacing SQLite/Prisma entirely. All user data, interview records, and feedback are stored in Firestore.
+
 ## Setup
 
 ### Prerequisites

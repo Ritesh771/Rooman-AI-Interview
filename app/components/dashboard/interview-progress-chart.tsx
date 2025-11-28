@@ -9,21 +9,24 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 
 
 const chartConfig = {
-    total: {
-        label: "Total Mock Int."
+    completed: {
+        label: "Completed"
     },
     inprogress: {
-        label: "Inprogress"
+        label: "In Progress"
     }
 } satisfies ChartConfig
 
 
 
-export function InterviewProgressChart({ CompletedInterviews, inProgress }: { CompletedInterviews: number, inProgress: number }) {
+export function InterviewProgressChart({ completedInterviews, inProgressInterviews }: { 
+    completedInterviews: number, 
+    inProgressInterviews: number 
+}) {
 
     const chartData = [
-        { type: "total", visitors: CompletedInterviews, fill: "hsl(var(--chart-1))" },
-        { type: "inprogress", visitors: inProgress, fill: "hsl(var(--chart-2))" },
+        { type: "completed", visitors: completedInterviews, fill: "hsl(var(--chart-1))" },
+        { type: "inprogress", visitors: inProgressInterviews, fill: "hsl(var(--chart-2))" },
     ]
 
     return (

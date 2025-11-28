@@ -1,5 +1,5 @@
 import { auth } from "@/app/(auth-pages)/auth";
-import { prisma } from "@/prisma/prisma";
+import { updateUserProfile } from "@/lib/firebase-data";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -13,16 +13,13 @@ export async function POST(req: NextRequest) {
     const { summary, workExperience, projects, skills, education, certifications } = await req.json();
     console.log("Data:", { summary, workExperience, projects, skills, education, certifications });
 
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: {
-        summary,
-        workExperience,
-        projects,
-        skills,
-        education,
-        certifications,
-      },
+    await updateUserProfile(session.user.id, {
+      summary,
+      workExperience,
+      projects,
+      skills,
+      education,
+      certifications,
     });
 
     return NextResponse.json({ success: true });

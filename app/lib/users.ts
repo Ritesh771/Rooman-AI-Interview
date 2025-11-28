@@ -1,14 +1,9 @@
-import {prisma} from "@/prisma/prisma"
 import bcrypt from "bcrypt";
-
+import { getUserByEmail as firebaseGetUserByEmail, createUser } from "@/lib/firebase-data";
 
 export const getUserByEmail = async (email: string) => {
     try {
-        return await prisma.user.findFirst({
-            where: {
-                email: email
-            }
-        });
+        return await firebaseGetUserByEmail(email);
     } catch (err) {
         console.log(err);
     }
@@ -17,13 +12,11 @@ export const getUserByEmail = async (email: string) => {
 
 export const CreateNewUser = async (userData: any) => {
     const {email, password, fullname} = userData;
-    await prisma.user.create({
-        data: {
-            email: email,
-            password: await hashPassword(password),
-            name: fullname,
-        }
-    })
+    await createUser({
+        email: email,
+        password: password,
+        fullname: fullname,
+    });
 }
 
 export const hashPassword = async (password: string) => {

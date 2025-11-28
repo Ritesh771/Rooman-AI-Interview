@@ -1,7 +1,7 @@
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { NextRequest } from "next/server";
-import { prisma } from "@/prisma/prisma";
+import { createInterview } from "@/lib/firebase-data";
 
 // Define the structure for a coding challenge
 interface CodingChallenge {
@@ -123,20 +123,18 @@ export async function POST(req: NextRequest) {
     };
 
     // Save to database
-    const createdInterview = await prisma.interview.create({
-      data: {
-        name: name as string,
-        role: role as string,
-        type: type as string,
-        techStack: (techStack as string).split(","),
-        experience: experience as string,
-        difficultyLevel: difficultyLevel as string,
-        noOfQuestions: noOfQuestions,
-        userId: userId as string,
-        isCompleted: false,
-        // Store the coding interview data as JSON
-        questions: codingInterview as any,
-      },
+    const createdInterview = await createInterview({
+      name: name as string,
+      role: role as string,
+      type: type as string,
+      techStack: (techStack as string).split(","),
+      experience: experience as string,
+      difficultyLevel: difficultyLevel as string,
+      noOfQuestions: noOfQuestions,
+      userId: userId as string,
+      isCompleted: false,
+      // Store the coding interview data as JSON
+      questions: codingInterview as any,
     });
 
     return Response.json({ success: true, interview: createdInterview }, { status: 200 });

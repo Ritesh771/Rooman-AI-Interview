@@ -47,7 +47,7 @@
 
 ### Backend Services
 - **Firebase Auth**: Handles user authentication and authorization
-- **Firestore**: NoSQL database for storing interview data, user profiles, and transcripts
+- **Firestore**: NoSQL database for storing interview data, user profiles, and transcripts (now the sole database backend)
 - **VAPI**: Provides voice assistant capabilities for interactive interviews
 - **Google Gemini**: AI service for generating feedback and analysis
 
