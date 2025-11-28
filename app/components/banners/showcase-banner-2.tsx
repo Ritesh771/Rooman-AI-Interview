@@ -13,7 +13,7 @@ const ShowcaseBanner2 = () => {
                 </h2>
                 <p className="text-base md:text-lg text-center lg:text-left text-gray-700 leading-relaxed">
                     Whether you're preparing for behavioral, technical, or niche interviews,
-                    <strong className="text-blue-700"> AI Mock Interview </strong> 
+                    <strong className="text-blue-700"> AI Interview </strong> 
                     adapts to your needs. Get real-time, tailored feedback to improve your delivery, boost your confidence, and master every question. Ready to level up your interview game? Try it today and feel the difference.
                 </p>
             </section>

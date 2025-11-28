@@ -33,7 +33,7 @@ export async function GET() {
       inProgress: interviews.filter(i => !i.isCompleted).length,
     };
 
-    // Get leaderboard data - top 10 users by average mock interview score
+    // Get leaderboard data - top 10 users by average interview score
     const leaderboard = await prisma.user.findMany({
       where: {
         feedBack: {

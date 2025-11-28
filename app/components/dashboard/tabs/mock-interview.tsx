@@ -28,7 +28,7 @@ const MockInterviewTab = () => {
       <CardHeader className="flex py-4 justify-end flex-row">
         <Input
           className="p-5 bg-white rounded-full text-sm max-w-sm active:outline-none active:ring-0 focus:outline-none focus:ring-0 focus:ring-offset-0"
-          placeholder="Search Mock Interviews"
+          placeholder="Search Interviews"
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
         />

@@ -21,10 +21,10 @@ export type InterviewHistoryType = {
 export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '1',
-    name: 'Frontend Developer Mock',
+    name: 'Frontend Developer Interview',
     createdAt: new Date('2025-08-01T10:30:00'),
     role: 'Frontend Developer',
-    type: 'Mock',
+    type: 'AI',
     difficultyLevel: 'Medium',
     feedBack: 'Good understanding of React basics, but needs improvement in performance optimization.',
     totalScore: 75
@@ -41,10 +41,10 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   },
   {
     id: '3',
-    name: 'Fullstack Developer Mock',
+    name: 'Fullstack Developer Interview',
     createdAt: new Date('2025-08-03T09:15:00'),
     role: 'Fullstack Developer',
-    type: 'Mock',
+    type: 'AI',
     difficultyLevel: 'Easy',
     feedBack: 'Strong problem-solving, but struggled with advanced CSS layouts.',
     totalScore: 68
@@ -61,10 +61,10 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   },
   {
     id: '5',
-    name: 'Machine Learning Engineer Mock',
+    name: 'Machine Learning Engineer Interview',
     createdAt: new Date('2025-08-05T11:20:00'),
     role: 'Machine Learning Engineer',
-    type: 'Mock',
+    type: 'AI',
     difficultyLevel: 'Hard',
     feedBack: 'Great model selection, but needs better explanation of hyperparameter tuning.',
     totalScore: 85
@@ -81,10 +81,10 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   },
   {
     id: '7',
-    name: 'UI/UX Designer Mock',
+    name: 'UI/UX Designer Interview',
     createdAt: new Date('2025-08-07T10:10:00'),
     role: 'UI/UX Designer',
-    type: 'Mock',
+    type: 'AI',
     difficultyLevel: 'Easy',
     feedBack: 'Creative designs but needs more focus on accessibility best practices.',
     totalScore: 71
@@ -101,10 +101,10 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   },
   {
     id: '9',
-    name: 'Cloud Architect Mock',
+    name: 'Cloud Architect Interview',
     createdAt: new Date('2025-08-08T12:00:00'),
     role: 'Cloud Architect',
-    type: 'Mock',
+    type: 'AI',
     difficultyLevel: 'Medium',
     feedBack: 'Strong AWS architecture skills, but Azure services understanding is limited.',
     totalScore: 80

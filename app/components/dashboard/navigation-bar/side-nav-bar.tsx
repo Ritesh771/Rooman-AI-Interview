@@ -8,7 +8,7 @@ import { Dispatch, SetStateAction } from "react";
 
 const Tabitems = [
     { value: "Dashboard", key: "dashboard" },        
-    { value: "Mock Interviews", key: "mock_interviews" },  
+    { value: "Interviews", key: "mock_interviews" },  
     { value: "Create Interview", key: "create_interview" }, 
     { value: "Interview History", key: "interview_history" }, 
     { value: "Profile", key: "complete_profile" }, 

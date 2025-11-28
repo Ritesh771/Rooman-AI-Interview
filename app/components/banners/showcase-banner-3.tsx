@@ -7,23 +7,23 @@ import Image from "next/image";
 const interviewTips = [
     {
         head: "Overcome Interview Anxiety",
-        subhead: "Nerves can cloud your thinking, causing hesitation, rambling, or forgetting key points. You want to feel calm and confident, not stressed under pressure. Our AI mock interviews simulate real job interview scenarios, giving you safe, repeatable practice to build composure and ace the real thing."
+        subhead: "Nerves can cloud your thinking, causing hesitation, rambling, or forgetting key points. You want to feel calm and confident, not stressed under pressure. Our AI interviews simulate real job interview scenarios, giving you safe, repeatable practice to build composure and ace the real thing."
     },
     {
         head: "Master Unpredictable Questions",
-        subhead: "Curveball questions, behavioral scenarios, or technical challenges can catch even the most prepared candidates off guard. You need to think on your feet and impress. With AI mock interviews, you'll face tough, realistic questions and get instant feedback to sharpen your responses—ensuring you're ready for anything."
+        subhead: "Curveball questions, behavioral scenarios, or technical challenges can catch even the most prepared candidates off guard. You need to think on your feet and impress. With AI interviews, you'll face tough, realistic questions and get instant feedback to sharpen your responses—ensuring you're ready for anything."
     },
     {
         head: "Get the Feedback You Deserve",
-        subhead: "Traditional practice often leaves you guessing where to improve—no constructive insights, just uncertainty. You want clarity on your strengths and weaknesses to stand out. Our AI mock interviews provide personalized, real-time feedback, helping you refine your delivery and showcase your best self to hiring managers."
+        subhead: "Traditional practice often leaves you guessing where to improve—no constructive insights, just uncertainty. You want clarity on your strengths and weaknesses to stand out. Our AI interviews provide personalized, real-time feedback, helping you refine your delivery and showcase your best self to hiring managers."
     },
     {
         head: "Unlock Unlimited Practice Opportunities",
-        subhead: "Scheduling mock interviews with friends or mentors can be tricky—conflicts, availability, and inconsistent feedback make it hard to prepare. You want reliable, high-quality practice on your terms. With AI mock interviews, practice anytime, anywhere, at your pace, so you're always interview-ready."
+        subhead: "Scheduling interviews with friends or mentors can be tricky—conflicts, availability, and inconsistent feedback make it hard to prepare. You want reliable, high-quality practice on your terms. With AI interviews, practice anytime, anywhere, at your pace, so you're always interview-ready."
     },
     {
         head: "Showcase Your Strengths with Confidence",
-        subhead: "Many candidates struggle to highlight their achievements and skills in a way that resonates with employers. You want to stand out and leave a lasting impression. AI mock interviews help you craft compelling narratives, eliminate filler words, and project confidence—ensuring you shine in every job interview."
+        subhead: "Many candidates struggle to highlight their achievements and skills in a way that resonates with employers. You want to stand out and leave a lasting impression. AI interviews help you craft compelling narratives, eliminate filler words, and project confidence—ensuring you shine in every job interview."
     }
 ];
 
@@ -54,10 +54,10 @@ const ShowcaseBanner3 = () => {
         <article className='pb-16'>
             <section className='flex flex-col md:flex-row justify-between gap-8 md:gap-12 pt-8 md:pt-12 pb-12 items-center'>
                 <h2 className='text-3xl md:text-4xl font-bold text-center md:text-left bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent'>
-                    How AI Mock Interviews Can Help You Succeed
+                    How AI Interviews Can Help You Succeed
                 </h2>
                 <p className='max-w-2xl text-center md:text-left text-lg text-gray-700 leading-relaxed'>
-                    Stop feeling unprepared and anxious. Discover how AI-powered mock interviews help you ace your next job interview with confidence.
+                    Stop feeling unprepared and anxious. Discover how AI-powered interviews help you ace your next job interview with confidence.
                 </p>
             </section>
             <section>

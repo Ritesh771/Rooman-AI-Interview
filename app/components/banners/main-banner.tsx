@@ -21,7 +21,7 @@ const MainBanner = () => {
                         />
                     </div>
                     <p className='text-center xl:text-left text-lg md:text-xl leading-relaxed text-gray-700'>
-                        Face the toughest mock interviews in the world—rigorous standards, intense questions, and zero room for error. Practice with industry giants and gain the confidence and skills you need to ace any real interview with ease.
+                        Face the toughest interviews in the world—rigorous standards, intense questions, and zero room for error. Practice with industry giants and gain the confidence and skills you need to ace any real interview with ease.
                     </p>
                 </div>
                 <Link href={"/dashboard"}>

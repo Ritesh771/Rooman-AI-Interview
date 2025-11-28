@@ -53,7 +53,7 @@ const ShowCaseBanner1 = () => {
                     Unlock Your Interview Success
                 </h2>
                 <p className='max-w-2xl text-center md:text-left text-lg text-gray-700 leading-relaxed'>
-                    Transform your interview skills with AI-driven mock interviews that mimic real-world scenarios, helping you refine answers, eliminate mistakes, and boost confidence like never before.
+                    Transform your interview skills with AI-driven interviews that mimic real-world scenarios, helping you refine answers, eliminate mistakes, and boost confidence like never before.
                 </p>
             </section>
             <section className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'>

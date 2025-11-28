@@ -70,7 +70,7 @@ const Interview = () => {
 
     return (
         <article className="mt-8 flex flex-col gap-10">
-            <h2 className="text-2xl font-semibold">Customize your mock interview to suit your needs...</h2>
+            <h2 className="text-2xl font-semibold">Customize your interview to suit your needs...</h2>
             <section className="flex gap-12 flex-1 items-center flex-row justify-center w-full">
                 <div
                     className="flex-col gap-y-1 flex items-center justify-center h-[320px] border-2 border-[#CAC5FE] rounded-2xl w-full  md:w-1/2 bg-gradient-to-b from-[#181537] to-[#0C0B16]">

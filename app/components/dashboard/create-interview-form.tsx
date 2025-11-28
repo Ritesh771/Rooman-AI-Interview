@@ -64,10 +64,10 @@ const mockInterviewQuestions: (Question | Question[])[] = [
         defaultOption: "5"
     },
     {
-        label: "Mock Interview Title",
+        label: "Interview Title",
         name: "name",
         type: "input",
-        placeholder: "e.g., Google Frontend Tech Mock",
+        placeholder: "e.g., Google Frontend Tech Interview",
     }],
     // Add interview type selection
     {
@@ -97,7 +97,7 @@ const CreateInterviewForm = () => {
 
     useEffect(() => {
         if (state.success) {
-            toast.success("Mock Interview Created Successfully!", {
+            toast.success("Interview Created Successfully!", {
                 duration: 3000,
                 position: "top-right",
                 icon: "✅",
@@ -134,7 +134,7 @@ const CreateInterviewForm = () => {
             <Card className="flex flex-col w-full max-w-4xl z-50 p-4 bg-transparent border-none shadow-none">
                 <CardHeader className="p-0 mb-4">
                     <CardTitle className="text-dark text-xl md:text-2xl text-center md:text-left">
-                        Customize your mock interview to suit your needs.
+                        Customize your interview to suit your needs.
                     </CardTitle>
                 </CardHeader>
 
