@@ -5,12 +5,16 @@ import React from 'react'
 
 type DashboardHeaderProps = {
     completedInterViews: number,
-    totalInterViews:number,
-    userName?: string
+    totalInterViews: number,
+    userName?: string,
+    completionPercentage?: number
 }
 
 
 const DashboardTabHeader = (props: DashboardHeaderProps) => {
+    // Use the passed completionPercentage or default to 0
+    const completionPercentage = props.completionPercentage ?? 0;
+    
     return (
         <div className='flex gap-5 flex-col items-center md:items-start'>
             <h2 className='text-4xl z-10'>Welcome in, <span className='font-semibold'>{props.userName || 'User'}</span></h2>
@@ -23,9 +27,9 @@ const DashboardTabHeader = (props: DashboardHeaderProps) => {
                         <div className="relative z-10 self-end w-[160px] md:w-[200px] bg-[#5a5f7a] text-black text-sm rounded-full overflow-hidden">
                             <div
                                 className="absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,_transparent,_transparent_4px,_#e7e9fb_2px,_#000_6px)]"
-                                style={{ width: `85%` }}
+                                style={{ width: `${completionPercentage}%` }}
                             />
-                            <div className="relative text-xl p-3 pl-5 text-white font-semibold">85%</div>
+                            <div className="relative text-xl p-3 pl-5 text-white font-semibold">{completionPercentage}%</div>
                         </div>
                     </div>
                 </div>

@@ -10,103 +10,114 @@ import { UseQueryResult } from '@tanstack/react-query';
 export type InterviewHistoryType = {
   id: string;
   name: string;
-  completedAt: Date;
+  createdAt: Date;
   role: string;
   type: string;
   difficultyLevel: string;
-  feedBack: string;
+  feedBack: string | null;
+  totalScore?: number | null;
 };
 
 export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '1',
     name: 'Frontend Developer Mock',
-    completedAt: new Date('2025-08-01T10:30:00'),
+    createdAt: new Date('2025-08-01T10:30:00'),
     role: 'Frontend Developer',
     type: 'Mock',
     difficultyLevel: 'Medium',
     feedBack: 'Good understanding of React basics, but needs improvement in performance optimization.',
+    totalScore: 75
   },
   {
     id: '2',
     name: 'Backend Developer Practice',
-    completedAt: new Date('2025-08-02T15:00:00'),
+    createdAt: new Date('2025-08-02T15:00:00'),
     role: 'Backend Developer',
     type: 'Practice',
     difficultyLevel: 'Hard',
     feedBack: 'Excellent API design skills, but database query optimization can be improved.',
+    totalScore: 82
   },
   {
     id: '3',
     name: 'Fullstack Developer Mock',
-    completedAt: new Date('2025-08-03T09:15:00'),
+    createdAt: new Date('2025-08-03T09:15:00'),
     role: 'Fullstack Developer',
     type: 'Mock',
     difficultyLevel: 'Easy',
     feedBack: 'Strong problem-solving, but struggled with advanced CSS layouts.',
+    totalScore: 68
   },
   {
     id: '4',
     name: 'Data Analyst Practice',
-    completedAt: new Date('2025-08-04T14:45:00'),
+    createdAt: new Date('2025-08-04T14:45:00'),
     role: 'Data Analyst',
     type: 'Practice',
     difficultyLevel: 'Medium',
     feedBack: 'Good data visualization skills, minor issues with SQL joins.',
+    totalScore: 79
   },
   {
     id: '5',
     name: 'Machine Learning Engineer Mock',
-    completedAt: new Date('2025-08-05T11:20:00'),
+    createdAt: new Date('2025-08-05T11:20:00'),
     role: 'Machine Learning Engineer',
     type: 'Mock',
     difficultyLevel: 'Hard',
     feedBack: 'Great model selection, but needs better explanation of hyperparameter tuning.',
+    totalScore: 85
   },
   {
     id: '6',
     name: 'DevOps Engineer Practice',
-    completedAt: new Date('2025-08-06T13:50:00'),
+    createdAt: new Date('2025-08-06T13:50:00'),
     role: 'DevOps Engineer',
     type: 'Practice',
     difficultyLevel: 'Medium',
     feedBack: 'Solid CI/CD pipeline setup, could improve Kubernetes troubleshooting speed.',
+    totalScore: 73
   },
   {
     id: '7',
     name: 'UI/UX Designer Mock',
-    completedAt: new Date('2025-08-07T10:10:00'),
+    createdAt: new Date('2025-08-07T10:10:00'),
     role: 'UI/UX Designer',
     type: 'Mock',
     difficultyLevel: 'Easy',
     feedBack: 'Creative designs but needs more focus on accessibility best practices.',
+    totalScore: 71
   },
   {
     id: '8',
     name: 'Cybersecurity Analyst Practice',
-    completedAt: new Date('2025-08-07T16:40:00'),
+    createdAt: new Date('2025-08-07T16:40:00'),
     role: 'Cybersecurity Analyst',
     type: 'Practice',
     difficultyLevel: 'Hard',
     feedBack: 'Good knowledge of OWASP Top 10, but incident response strategy was lacking.',
+    totalScore: 77
   },
   {
     id: '9',
     name: 'Cloud Architect Mock',
-    completedAt: new Date('2025-08-08T12:00:00'),
+    createdAt: new Date('2025-08-08T12:00:00'),
     role: 'Cloud Architect',
     type: 'Mock',
     difficultyLevel: 'Medium',
     feedBack: 'Strong AWS architecture skills, but Azure services understanding is limited.',
+    totalScore: 80
   },
   {
     id: '10',
     name: 'Mobile App Developer Practice',
-    completedAt: new Date('2025-08-09T09:50:00'),
+    createdAt: new Date('2025-08-09T09:50:00'),
     role: 'Mobile App Developer',
     type: 'Practice',
     difficultyLevel: 'Easy',
     feedBack: 'Good Flutter skills, but state management could be improved for scalability.',
+    totalScore: 74
   },
 ];
 
@@ -151,7 +162,7 @@ export const columns: ColumnDef<InterviewHistoryType>[] = [
   }
   ,
   {
-    accessorKey: "completedAt",
+    accessorKey: "createdAt",
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       const handleSort = () => column.toggleSorting(isSorted === "asc");
@@ -171,7 +182,7 @@ export const columns: ColumnDef<InterviewHistoryType>[] = [
       );
     },
     enableSorting: true,
-    cell: ({ row }) => <div className="lowercase">{(new Date(row.getValue<Date>("completedAt"))).toLocaleDateString()}</div>,
+    cell: ({ row }) => <div className="lowercase">{(new Date(row.getValue<Date>("createdAt"))).toLocaleDateString()}</div>,
     size: 100
 
   },
@@ -231,10 +242,44 @@ export const columns: ColumnDef<InterviewHistoryType>[] = [
     maxSize: 100,
   },
   {
-    accessorKey: "feedBack",
-    header: ({ column }) => "FeedBack",
-    cell: ({ row }) => <FeedBackDialog interviewtitle={row.getValue<string>("name")} feedBack={row.getValue<string>("feedBack")} />,
-  }
+    accessorKey: "totalScore",
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      const handleSort = () => column.toggleSorting(isSorted === "asc");
+
+      return (
+        <Button
+          variant="ghost"
+          onClick={handleSort}
+          className="flex items-center gap-1"
+          aria-label={`Sort by Score ${isSorted === "asc" ? "descending" : "ascending"}`}
+        >
+          Score
+          {isSorted === "asc" && <ArrowUp className="w-4 h-4" />}
+          {isSorted === "desc" && <ArrowDown className="w-4 h-4" />}
+          {!isSorted && <ArrowUpDown className="w-4 h-4 opacity-50" />}
+        </Button>
+      );
+    },
+    enableSorting: true,
+    cell: ({ row }) => {
+      const score = row.getValue<number | null>("totalScore");
+      return (
+        <div className="flex items-center gap-1">
+          <span>{score !== null ? `${score}/100` : "---"}</span>
+        </div>
+      );
+    },
+    size: 80
+},
+{
+  accessorKey: "feedBack",
+  header: ({ column }) => "FeedBack",
+  cell: ({ row }) => {
+    const feedback = row.getValue<string | null>("feedBack");
+    return <FeedBackDialog interviewtitle={row.getValue<string>("name")} feedBack={feedback || "No feedback available"} />;
+  },
+},
 ]
 
 export function InterviewHistoryTable({ globalFilterValue, query }: InterviewHistoryTableProps) {

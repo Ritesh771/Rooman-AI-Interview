@@ -2,8 +2,7 @@ import { Button } from "../ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 
 
-
-export function FeedBackDialog({ feedBack, interviewtitle }: { feedBack: string, interviewtitle: string }) {
+export function FeedBackDialog({ feedBack, interviewtitle }: { feedBack: string | null, interviewtitle: string }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -11,9 +10,9 @@ export function FeedBackDialog({ feedBack, interviewtitle }: { feedBack: string,
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{interviewtitle }</DialogTitle>
+                    <DialogTitle>{interviewtitle}</DialogTitle>
                     <DialogDescription>
-                        {feedBack}
+                        {feedBack || "No feedback available"}
                     </DialogDescription>
                 </DialogHeader>
 

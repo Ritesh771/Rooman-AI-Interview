@@ -12,14 +12,23 @@ import { toast } from 'sonner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@/hooks/react-query/keys';
 
+// Define the question type
+type Question = {
+  label: string;
+  name: string;
+  type: "input" | "select";
+  placeholder?: string;
+  options?: string[];
+  defaultOption?: string;
+};
 
-
-const mockInterviewQuestions = [
+const mockInterviewQuestions: (Question | Question[])[] = [
     {
         label: "What type of interview would you like to practice?",
         name: "type",
-        type: "input",
-        placeholder: "e.g., Technical, Behavioral, System Design",
+        type: "select",
+        options: ["Technical", "Behavioral", "System Design", "Mixed"],
+        defaultOption: "Technical",
     },
     [{
         label: "What role are you focusing on?",
@@ -60,6 +69,14 @@ const mockInterviewQuestions = [
         type: "input",
         placeholder: "e.g., Google Frontend Tech Mock",
     }],
+    // Add interview type selection
+    {
+        label: "Interview Type",
+        name: "interviewType",
+        type: "select",
+        options: ["Regular", "Coding"],
+        defaultOption: "Regular",
+    }
 ];
 
 
@@ -141,7 +158,7 @@ const CreateInterviewForm = () => {
                                                         type="text"
                                                         name={question.name}
                                                         className="text-sm"
-                                                        placeholder={question.placeholder}
+                                                        placeholder={question.placeholder || ""}
                                                         required
                                                     />
                                                 ) : (
@@ -180,7 +197,7 @@ const CreateInterviewForm = () => {
                                                 type="text"
                                                 name={question.name}
                                                 className="text-sm"
-                                                placeholder={question.placeholder}
+                                                placeholder={question.placeholder || ""}
                                                 required
                                             />
                                         ) : (
@@ -188,7 +205,7 @@ const CreateInterviewForm = () => {
                                             && 'options' in question
                                             && Array.isArray(question.options)
                                             && (
-                                                <Select name={question.name} required>
+                                                <Select name={question.name} required defaultValue={question.defaultOption}>
                                                     <SelectTrigger className="w-full">
                                                         <SelectValue placeholder={question.options[0]} />
                                                     </SelectTrigger>
@@ -236,6 +253,5 @@ const CreateInterviewForm = () => {
         </div>
     );
 };
-
 
 export default CreateInterviewForm

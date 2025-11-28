@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Input, Button } from "@chakra-ui/react";
-import styles from "@/styles/codeplatform/buttons.module.css";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const UserInput = ({ setUserID, setRoomID }) => {
     const [inputValue, setInputValue] = useState("");
@@ -36,39 +36,38 @@ const UserInput = ({ setUserID, setRoomID }) => {
     };
 
     return (
-        <div className={styles.groups}>
-            <div className={styles.groupInputs}>
+        <div className="flex flex-col gap-6 p-6 bg-gray-800 rounded-lg">
+            <div className="flex flex-col gap-4">
                 <h2 style={{ color: "white", fontSize: 24, marginBottom: 24 }}>Live Code Interviewer</h2>
                 <Input
-                    className={styles.defaultInputs}
                     type="text"
-                    width="auto"
                     placeholder="Name"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
+                    className="p-2 rounded border border-gray-300"
                 />
                 <Input
                     type="text"
-                    className={styles.defaultInputs}
-                    width="auto"
                     placeholder="Unique Room ID"
                     value={roomID}
                     onChange={(e) => setInputRoomID(e.target.value)}
+                    className="p-2 rounded border border-gray-300"
                 />
             </div>
-            <div className={styles.groupButtons}>
-                <Button colorScheme="gray" className={styles.defaultButtons} onClick={handleSubmit}>
+            <div className="flex flex-col gap-2">
+                <Button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 text-white">
                     Start
                 </Button>
-                <Button colorScheme="gray" className={styles.defaultButtons} onClick={handleGenerateRoomID}>
+                <Button onClick={handleGenerateRoomID} className="bg-gray-500 hover:bg-gray-600 text-white">
                     Generate Room ID
                 </Button>
                 <Button
-                    className={styles.defaultButtons}
                     onClick={() => {
                         // window.location.href = `/interviewReport/index.html?roomId=${roomID}`;
                         alert("Interview Report not yet implemented");
-                    }}>
+                    }}
+                    className="bg-purple-500 hover:bg-purple-600 text-white"
+                >
                     Interview Reports
                 </Button>
             </div>

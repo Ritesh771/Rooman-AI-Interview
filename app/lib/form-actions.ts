@@ -35,18 +35,25 @@ export async function handleCreateInterviewFormAction(
         : null,
       userId: userId,
     };
+    
     await CreateInterviewSchema.parseAsync(data);
 
-    const createInterviewRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/interview/create`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    // Check if this is a coding interview
+    const interviewType = formData.get("interviewType") || "Regular";
+    const isCodingInterview = interviewType === "Coding";
+    
+    // Determine which API endpoint to use
+    const apiUrl = isCodingInterview 
+      ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/interview/create-coding`
+      : `${process.env.NEXT_PUBLIC_BASE_URL}/api/interview/create`;
+
+    const createInterviewRes = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
     if (createInterviewRes.ok) {
       return { success: true };
@@ -57,7 +64,6 @@ export async function handleCreateInterviewFormAction(
     return { success: false };
   }
 }
-
 
 export async function handleCompleteInterviewAction(data:any) {
   try {

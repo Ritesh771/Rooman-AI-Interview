@@ -1,53 +1,51 @@
+import { Button } from "@/components/ui/button";
 import {
-    Box,
-    Button,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
-    Text,
-} from "@chakra-ui/react";
-import { LANGUAGE_VERSIONS } from "@/utils/codeplatform/constants";
-import styles from "@/styles/codeplatform/display.module.css";
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarTrigger,
+} from "@/components/ui/menubar";
+import clsx from "clsx";
+import { LANGUAGE_VERSIONS } from "@/code/utils/codeplatform/constants";
 
 const languages = Object.entries(LANGUAGE_VERSIONS);
-const ACTIVE_COLOR = "blue.400";
+const ACTIVE_COLOR_CLASS = "text-blue-500";
 
 const LanguageSelector = ({
     language,
     onSelect,
 }) => {
     return (
-        <Box ml={2} mb={4}>
-            <div className={styles.display}>
-                <Text mb={2} fontSize="lg">
-                    Language:
-                </Text>
-                <Menu isLazy>
-                    <MenuButton as={Button}>{language}</MenuButton>
-                    <MenuList bg="#110c1b">
+        <div className="flex items-center space-x-2">
+            <span className="text-sm font-medium text-gray-700">Language:</span>
+            <Menubar>
+                <MenubarMenu>
+                    <MenubarTrigger asChild>
+                        <Button variant="outline" size="sm" className="capitalize">
+                            {language}
+                        </Button>
+                    </MenubarTrigger>
+                    <MenubarContent className="bg-background">
                         {languages.map(([lang, version]) => (
-                            <MenuItem
+                            <MenubarItem
                                 key={lang}
-                                color={lang === language ? ACTIVE_COLOR : ""}
-                                bg={lang === language ? "gray.900" : "transparent"}
-                                _hover={{
-                                    color: ACTIVE_COLOR,
-                                    bg: "gray.900",
-                                }}
+                                className={clsx(
+                                    "flex w-full items-center justify-between",
+                                    lang === language && `${ACTIVE_COLOR_CLASS} font-semibold`
+                                )}
                                 onClick={() => onSelect(lang)}
                             >
-                                {lang}
-                                &nbsp;
-                                <Text as="span" color="gray.600" fontSize="sm">
+                                <span className="capitalize">{lang}</span>
+                                <span className="ml-2 text-xs text-gray-500">
                                     {version}
-                                </Text>
-                            </MenuItem>
+                                </span>
+                            </MenubarItem>
                         ))}
-                    </MenuList>
-                </Menu>
-            </div>
-        </Box>
+                    </MenubarContent>
+                </MenubarMenu>
+            </Menubar>
+        </div>
     );
 };
 

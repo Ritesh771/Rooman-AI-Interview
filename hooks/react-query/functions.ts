@@ -6,6 +6,8 @@ type interviewsType = {
   role: string;
   difficultyLevel: string;
   isCompleted: boolean | null;
+  feedBack?: string | null;
+  totalScore?: number | null;
 }[];
 
 export const FetchMockInterviews = async () => {

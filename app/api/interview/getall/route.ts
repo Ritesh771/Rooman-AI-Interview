@@ -14,19 +14,38 @@ export async function GET(req: NextRequest) {
       where: {
         userId,
       },
-      select: {
-        id: true,
-        name: true,
-        type: true,
-        role: true,
-        difficultyLevel: true,
-        isCompleted: true,
-        createdAt: true,
+      include: {
+        feedBack: true,
       },
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
 
-    return NextResponse.json(interviews);
+    // Transform the data to match the expected format
+    const transformedInterviews = interviews.map(interview => ({
+      id: interview.id,
+      name: interview.name,
+      type: interview.type,
+      role: interview.role,
+      difficultyLevel: interview.difficultyLevel,
+      isCompleted: interview.isCompleted,
+      createdAt: interview.createdAt,
+      feedBack: interview.feedBack?.feedBack || null,
+      totalScore: interview.feedBack ? 
+        Math.round((
+          interview.feedBack.problemSolving +
+          interview.feedBack.systemDesign +
+          interview.feedBack.communicationSkills +
+          interview.feedBack.technicalAccuracy +
+          interview.feedBack.behavioralResponses +
+          interview.feedBack.timeManagement
+        ) / 6) : null
+    }));
+
+    return NextResponse.json(transformedInterviews);
   } catch (error) {
+    console.error("Error fetching interviews:", error);
     return NextResponse.json(
       { error: "Failed to fetch interviews" },
       { status: 500 }
