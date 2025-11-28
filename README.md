@@ -1,6 +1,19 @@
 # NeuroSync
 
+**Developer**: Ritesh N  
+**Portfolio**: https://riteshn.me/
+
 A modern AI-powered interview platform that simulates real job interviews using voice assistants and provides instant feedback.
+
+## Core Features
+
+- **Multi-Language Coding Platform**: Java, JavaScript, Python, and C language support with real-time compilation
+- **Live Voice Interaction**: Real-time voice conversations with AI assistants during interviews
+- **Typing Answers with Gemini**: AI-powered text-based interview responses using Google Gemini
+- **Instant AI Feedback**: Detailed performance evaluation and suggestions powered by Google Gemini
+- **Technical Interview Simulation**: Realistic coding challenges with integrated development environment
+- **Voice-Enabled Interviews**: Interactive voice-based questioning and answering
+- **Comprehensive Dashboard**: Track and manage all interviews with performance analytics
 
 ## Demo Link
 
