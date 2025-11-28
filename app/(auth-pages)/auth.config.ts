@@ -6,7 +6,7 @@ import Google from "next-auth/providers/google";
 export default {
   providers: [
     Credentials({
-      name: "Take Interview Platform",
+      name: "NeuroSync",
       credentials: {
         email: {},
         password: {},

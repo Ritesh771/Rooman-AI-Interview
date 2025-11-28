@@ -94,7 +94,7 @@ const Interview = () => {
                             />
                         </div>
                     </div>
-                    <h3 className="text-3xl font-semibold">AI Interviewer</h3>
+                    <h3 className="text-3xl font-semibold">NeuroSync Interviewer</h3>
                 </div>
 
                 <div

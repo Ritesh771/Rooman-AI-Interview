@@ -1,9 +1,9 @@
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
-import "../../../globals.css";
+import "../../globals.css";
 import Provider from "@/app/provider";
-import { Tabs } from '../../../components/ui/tabs'
+import { Tabs } from '@/app/components/ui/tabs'
 import NavBarContainer from "@/app/components/dashboard/navigation-bar/nav-bar-wrapper";
 import DashboardNavBar from "@/app/components/dashboard/navigation-bar/nav-bar";
 import { Suspense } from "react";

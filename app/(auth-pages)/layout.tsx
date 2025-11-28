@@ -7,8 +7,8 @@ const grotesk = Space_Grotesk({
 })
 
 export const metadata = {
-    title: 'Take Interview',
-    description: 'AI Interview Platform',
+    title: 'NeuroSync',
+    description: 'NeuroSync - AI Interview Platform',
 }
 
 

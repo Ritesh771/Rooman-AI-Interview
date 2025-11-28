@@ -15,7 +15,8 @@ const DashboardTab = async () => {
       where: {
         id: user?.user?.id
       },
-      include: {
+      select: {
+        id: true,
         interviews: true,
         feedBack: true
       }
@@ -40,7 +41,7 @@ const DashboardTab = async () => {
     <Suspense fallback={<Loader />}>
       <div className='w-full flex flex-col gap-5 pb-10 xl:pb-0 overflow-auto md:overflow-y-none'>
         <div>
-          <DashboardTabHeader completedInterViews={completedInterViews} totalInterViews={inProgressInterViews} />
+          <DashboardTabHeader completedInterViews={completedInterViews} totalInterViews={inProgressInterViews} userName={user?.user?.name} />
         </div>
         <div className='flex flex-col xl:flex-row gap-y-5 gap-x-1.5'>
           <InterviewProgressChart CompletedInterviews={totalInterViews} inProgress={inProgressInterViews} />

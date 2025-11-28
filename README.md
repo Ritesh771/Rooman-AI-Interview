@@ -1,4 +1,4 @@
-# Rooman AI Interview
+# NeuroSync
 
 A modern AI-powered interview platform that simulates real job interviews using voice assistants and provides instant feedback.
 

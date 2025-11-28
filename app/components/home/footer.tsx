@@ -6,15 +6,16 @@ const Footer = () => {
         <footer className='md:h-[400px]  mb-auto min-h-[300px] items-center md:items-start flex flex-col gap-10 mt-20 text-white py-10 rounded-t-[45px] p-6 md:px-20 max-w-full sm:max-w-[540px] md:max-w-[720px] lg:max-w-[960px] xl:max-w-[1180px] mx-auto  bg-dark'>
             <div className='w-fit'>
                 <Link href={"/"}>
-                    <h3 className='text-3xl border-[#bec8ff] border-[1px]  rounded-3xl px-3.5 py-2.5 font-semibold flex items-center'><span className='font-bold text-4xl'>T</span>akeInt</h3>
+                    <h3 className='text-3xl border-[#bec8ff] border-[1px]  rounded-3xl px-3.5 py-2.5 font-semibold flex items-center'>NeuroSync</h3>
                 </Link>
             </div>
             <div className='flex flex-col md:flex-row items-center gap-20'>
                 <div className='flex flex-col gap-3'>
                     <h1 className='text-xl text-blue-200'>Contact us</h1>
-                    <span>Email: yuvaraj2selvam@gmail.com</span>
-                    <span>Name: yuvaraj s</span>
+                    <span>Email: riturithesh66@gmail.com</span>
+                    <span>Name: Ritesh N</span>
                     <span>Country: India</span>
+                    <span>Portfolio: <a href="https://riteshn.me" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">https://riteshn.me</a></span>
                 </div>
                 {/* <div className='flex-1 h-full'>
                     <form className="bg-[#292A32] px-10 py-8 rounded-[14px] gap-5 h-full flex flex-col sm:flex-row items-center justify-center">
@@ -26,9 +27,7 @@ const Footer = () => {
                 </div> */}
             </div>
             <hr />
-            <div className='md:text-left text-center'>
-                <span >2025 takeInt - Made with <span className='underline'>NextJs & Vapi</span> by <span className='underline'>yuvaraj s</span></span>
-            </div>
+            
         </footer>
     )
 }

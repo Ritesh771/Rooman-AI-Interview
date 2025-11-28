@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -17,6 +17,14 @@ model User {
   accounts      Account[]
   interviews    Interview[]
   feedBack      InterviewFeedback[]
+
+  // Profile fields
+  summary       String?
+  workExperience String?
+  projects      String?
+  skills        String?
+  education     String?
+  certifications String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -48,14 +56,14 @@ model Interview {
   name            String
   userId          String
   type            String
-  techStack       String[]
+  techStack       Json
   role            String
   experience      String
   difficultyLevel String
   noOfQuestions   Int
   createdAt       DateTime           @default(now())
   isCompleted     Boolean?           @default(false)
-  questions       String[]
+  questions       Json
   feedBack        InterviewFeedback?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

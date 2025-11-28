@@ -190,13 +190,13 @@ const InterviewBody = ({ id, questions, startInterview, handleLastMessageChange,
                     }
                     <Image
                         src="/robot-orange.png"
-                        alt="AI Interviewer"
+                        alt="NeuroSync Interviewer"
                         width={240}
                         height={240}
                         className="rounded-full animate-pulse p-4 z-20 pointer-events-none"
                     />
                 </div>
-                <span className="text-xl font-semibold text-center">AI Interviewer</span>
+                <span className="text-xl font-semibold text-center">NeuroSync Interviewer</span>
             </div>
 
             <div className="hidden md:flex flex-col items-center justify-center h-[400px] w-full max-w-xl p-6 border-2 border-black rounded-[45px] bg-[#e7e9fb] shadow-md gap-4">

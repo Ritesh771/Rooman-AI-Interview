@@ -1,39 +1,45 @@
 
-import { Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem } from '@radix-ui/react-menubar';
+'use client';
+
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu';
 import React from 'react';
 
 import Image from "next/image";
-import { SignOutButton } from './sign-out';
-import { auth } from '@/app/(auth-pages)/auth';
+import { signOut } from "next-auth/react";
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 type UserProfileTypes = {
     isOptionEnabled?: boolean
 }
 
-const UserProfileIcon = async (prop: UserProfileTypes) => {
-    const Session = await auth();
+const UserProfileIcon = (prop: UserProfileTypes) => {
+    const { data: Session } = useSession();
 
     return (
         Session &&
-        <Menubar>
-            <MenubarMenu>
-                <MenubarTrigger>
-                    <Image
-                        src={Session.user?.image ?? "/logo.png"}
-                        className="rounded-full object-center"
-                        height={42}
-                        width={42}
-                        alt="user image"
-                    />
-                </MenubarTrigger>
-
-                < MenubarContent className='bg-gray px-4 py-1.5 min-w-[120px] rounded-sm'>
-                    <MenubarItem className='text-dark font-semibold hover:border-0 cursor-pointer'>
-                        <SignOutButton />
-                    </MenubarItem>
-                </MenubarContent>
-            </MenubarMenu>
-        </Menubar>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Image
+                    src={Session.user?.image ?? "/logo.png"}
+                    className="rounded-full object-center cursor-pointer"
+                    height={42}
+                    width={42}
+                    alt="user image"
+                />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                    <Link href="/dashboard">Dashboard</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem variant="destructive" onClick={() => signOut({redirectTo:"/"})}>
+                    Sign out
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 };
 

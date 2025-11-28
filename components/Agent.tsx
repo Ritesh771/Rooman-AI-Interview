@@ -148,7 +148,7 @@ const Agent = ({
   return (
     <>
       <div className="call-view">
-        {/* AI Interviewer Card */}
+        {/* NeuroSync Interviewer Card */}
         <div className="card-interviewer">
           <div className="avatar">
             <Image
@@ -160,7 +160,7 @@ const Agent = ({
             />
             {isSpeaking && <span className="animate-speak" />}
           </div>
-          <h3>AI Interviewer</h3>
+          <h3>NeuroSync Interviewer</h3>
         </div>
 
         {/* User Profile Card */}

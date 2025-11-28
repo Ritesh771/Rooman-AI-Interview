@@ -14,7 +14,7 @@ const NavBar = async () => {
         <header className='px-4 sm:px-6 md:px-8 max-w-full sm:max-w-[540px] md:max-w-[720px] lg:max-w-[960px] xl:max-w-[1280px] mx-auto h-24 w-full sticky top-0 z-100 bg-white  items-center flex justify-between'>
             <div className="mr-auto">
                 <Link href={"/"}>
-                    <h3 className='text-xl md:text-3xl hover:bg-[#bec8ff] border-[1px] border-black rounded-3xl px-3 py-2.5 font-semibold flex items-center'><span className='font-bold text-xl md:text-4xl'>T</span>akeInt</h3>
+                    <h3 className='text-xl md:text-3xl hover:bg-[#bec8ff] border-[1px] border-black rounded-3xl px-3 py-2.5 font-semibold flex items-center'>NeuroSync</h3>
                 </Link>
             </div>
             <div className="flex items-center gap-4 md:gap-10 flex-row">

@@ -6,7 +6,7 @@ import React from 'react'
 
 
 
-const Page = async ({ params }: { params: { id: string } }) => {
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const interviewId = (await params).id;
   const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/interview/get/${interviewId}`)
   const data = await response.json();

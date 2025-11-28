@@ -1,20 +1,19 @@
 "use client";
 
-import { useSession } from 'next-auth/react'
 import React from 'react'
 
 
 type DashboardHeaderProps = {
     completedInterViews: number,
-    totalInterViews:number
+    totalInterViews:number,
+    userName?: string
 }
 
 
 const DashboardTabHeader = (props: DashboardHeaderProps) => {
-    const session = useSession();
     return (
         <div className='flex gap-5 flex-col items-center md:items-start'>
-            <h2 className='text-4xl z-10'>Welcome in, <span className='font-semibold'>{session.data?.user?.name}</span></h2>
+            <h2 className='text-4xl z-10'>Welcome in, <span className='font-semibold'>{props.userName || 'User'}</span></h2>
             <div className='flex w-full items-center md:flex-row flex-col gap-10 md:items-start justify-between'>
 
                 <div className="flex justify-between items-center flex-col md:flex-row gap-2">
