@@ -1,4 +1,3 @@
-
 'use client';
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu';
@@ -15,6 +14,20 @@ type UserProfileTypes = {
 
 const UserProfileIcon = (prop: UserProfileTypes) => {
     const { data: Session } = useSession();
+
+    // If isOptionEnabled is false, render just the image without dropdown
+    if (prop.isOptionEnabled === false) {
+        return (
+            Session &&
+            <Image
+                src={Session.user?.image ?? "/logo.png"}
+                className="rounded-full object-center"
+                height={42}
+                width={42}
+                alt="user image"
+            />
+        );
+    }
 
     return (
         Session &&

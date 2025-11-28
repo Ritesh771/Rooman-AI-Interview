@@ -18,7 +18,7 @@ const DashboardNavBar = () => {
             </Link>
             <div className='flex flex-row items-center gap-2.5'>
                 <TabBar />
-                <UserProfileIcon />
+                <UserProfileIcon isOptionEnabled={false} />
             </div>
         </div>
     )

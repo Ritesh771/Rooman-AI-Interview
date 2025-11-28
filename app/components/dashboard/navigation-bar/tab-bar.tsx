@@ -8,7 +8,7 @@ const tabItems = [
     { value: "Take Interview", key: "mock_interviews" },   // AI-generated practice interviews
     { value: "Create Interview", key: "create_interview" }, // Build custom interview flows
     { value: "Interview History", key: "interview_history" }, // Review past interviews with feedback
-    // { value: "Profile", key: "complete_profile" }, // Complete user profile with resume data
+    { value: "Profile", key: "complete_profile" }, // Complete user profile with resume data
 ];
 
 

@@ -11,7 +11,7 @@ const Tabitems = [
     { value: "Mock Interviews", key: "mock_interviews" },  
     { value: "Create Interview", key: "create_interview" }, 
     { value: "Interview History", key: "interview_history" }, 
-    // { value: "Complete Profile", key: "complete_profile" }, 
+    { value: "Profile", key: "complete_profile" }, 
 ];
 
 export type AppSideBar = {
@@ -32,17 +32,18 @@ export function AppSidebar(AppSideBarProp: AppSideBar) {
             </TabsList>
             {
                 user &&
-                <section className="items-end  flex justify-items-end h-full">
-                        <div className="flex items-center self-end justify-between gap-4">
+                <section className="items-end flex justify-items-end h-full w-full">
+                    <div className="flex items-center self-end justify-between gap-4 w-full">
+                        <Link href="/profile" className="flex items-center gap-2">
                             <Image src={user?.image ?? "/"} height={40} width={40} className="rounded-full" alt={user?.name as string ??
                                 +"use image"
                             } ></Image>
-                            <SignOutButton />
-                        </div>
-                   
+                            <span className="text-sm">Profile</span>
+                        </Link>
+                        <SignOutButton />
+                    </div>
                 </section>
             }
-
         </div>
     )
 }
