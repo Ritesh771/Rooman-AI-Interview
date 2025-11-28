@@ -35,8 +35,8 @@ yarn-error.log*
 next-env.d.ts
 
 # Vite (for codeplatform)
-/codeplatform/dist
-/codeplatform/node_modules
+**/codeplatform/dist
+**/codeplatform/node_modules
 
 # Firebase
 .firebase/
