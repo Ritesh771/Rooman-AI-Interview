@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const data = await req.json();
 
-  const conversation = (data.conservation as SavedMessage[])
+  const conversation = (data.conversation as SavedMessage[])
     .map(
       (msg) =>
         `${msg.role.toLocaleLowerCase() === "user" ? "User" : "Assistant"}: ${

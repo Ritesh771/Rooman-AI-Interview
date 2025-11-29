@@ -5,7 +5,7 @@ import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useTransition } from "react";
+import React, { useCallback, useEffect } from "react";
 
 
 export interface SavedMessage {
@@ -90,13 +90,34 @@ type InterviewBodyprops = {
 const InterviewBody = ({ id, questions, startInterview, handleLastMessageChange, isHangingUp }: InterviewBodyprops) => {
 
     const session = useSession();
+    const router = useRouter();
 
     const [callStart, setCallStart] = React.useState(false);
     const [isSpeaking, setIsSpeaking] = React.useState(false);
     const [savedMessage, setsavedMessage] = React.useState<SavedMessage[]>([]);
-    const [isPending, startTransition] = useTransition();
+    const [isCompleting, setIsCompleting] = React.useState(false);
 
-    const router = useRouter();
+    const handlehangUp = useCallback(async () => {
+        const completeInterviewData: CompleteInterviewType = {
+            id: id,
+            userid: session.data?.user?.id,
+            conversation: savedMessage
+        }
+
+        setIsCompleting(true);
+        try {
+            const result = await handleCompleteInterviewAction(completeInterviewData);
+            if (result.success) {
+                console.log("Interview completed successfully");
+            } else {
+                console.error("Failed to complete interview:", result.error);
+            }
+        } catch (error) {
+            console.error("Error completing interview:", error);
+        } finally {
+            setIsCompleting(false);
+        }
+    }, [savedMessage, id, session.data?.user?.id])
 
     useEffect(() => {
         setCallStart(false);
@@ -139,28 +160,18 @@ const InterviewBody = ({ id, questions, startInterview, handleLastMessageChange,
         }
     }, [savedMessage]);
 
-    const handlehangUp = useCallback(async () => {
-        const completeInterviewData: CompleteInterviewType = {
-            id: id,
-            userid: session.data?.user?.id,
-            conversation: savedMessage
-        }
-
-        startTransition(() => {
-            if (session.data?.user?.id)
-                handleCompleteInterviewAction(completeInterviewData);
-        })
-    }, [savedMessage])
-
-
     useEffect(() => {
         if (isHangingUp) {
             handleCallStop();
             handlehangUp();
-            if (isPending == false)
-                router.push("/dashboard");
         }
-    }, [isHangingUp, isPending])
+    }, [isHangingUp])
+
+    useEffect(() => {
+        if (isHangingUp && !isCompleting) {
+            router.push("/dashboard");
+        }
+    }, [isHangingUp, isCompleting, router])
 
     useEffect(() => {
         if (startInterview) handleCallConnect();
@@ -181,6 +192,15 @@ const InterviewBody = ({ id, questions, startInterview, handleLastMessageChange,
 
     return (
         <section className="flex items-center justify-center gap-6 z-60">
+            {isCompleting && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                        <p className="text-lg font-semibold">Generating your feedback...</p>
+                        <p className="text-sm text-gray-600">Please wait while we analyze your interview</p>
+                    </div>
+                </div>
+            )}
 
             <div className="flex flex-col items-center justify-center h-[400px] w-full max-w-xl p-6 border-2 border-black rounded-[45px] bg-[#e7e9fb] shadow-md ">
                 <div className="relative w-60 h-60 flex items-center justify-center">
