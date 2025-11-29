@@ -101,22 +101,25 @@ export default function LeaderBoard() {
                 `}
                 style={{ backgroundColor: item.bg }}
               >
-                {item.image ? (
-                  <Image 
-                    src={item.image} 
-                    alt={`${item.label} avatar`} 
-                    width={40} 
-                    height={40} 
-                    className="rounded-full mr-3"
-                    onError={(e) => {
-                      // Handle image loading errors by hiding the image
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                ) : (
-                  <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10 mr-3" />
-                )}
+                <div className="w-10 h-10 mr-3 rounded-full overflow-hidden">
+                  {item.image ? (
+                    <Image 
+                      src={item.image} 
+                      alt={`${item.label} avatar`} 
+                      width={40} 
+                      height={40} 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/logo.png';
+                      }}
+                    />
+                  ) : (
+                    <div className="bg-gray-200 border-2 border-dashed rounded-full w-full h-full flex items-center justify-center">
+                      <span className="text-xs text-gray-500">?</span>
+                    </div>
+                  )}
+                </div>
                 <span className="p-2">{item.label}</span>
                 <span className="p-2 font-bold">{item.score}</span>
                 <Image src={`/${item.imagepath}`} className='self-end' width={50} height={50} alt={`${index + 1} place medal`}></Image>

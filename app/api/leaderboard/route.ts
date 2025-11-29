@@ -14,16 +14,18 @@ export async function GET() {
       .map((user: any) => {
         if (user.feedBack.length === 0) return null;
 
-        // Calculate average score across all feedback categories
-        const totalScore = user.feedBack.reduce((sum: any, feedback: any) => {
-          return sum + Math.round((
-            feedback.problemSolving +
-            feedback.systemDesign +
-            feedback.communicationSkills +
-            feedback.technicalAccuracy +
-            feedback.behavioralResponses +
-            feedback.timeManagement
-          ) / 6);
+        // Calculate average score across all feedback categories, matching dashboard calculation
+        const totalScore = user.feedBack.reduce((sum: number, feedback: any) => {
+          const scores = [
+            feedback.problemSolving || 0,
+            feedback.systemDesign || 0,
+            feedback.communicationSkills || 0,
+            feedback.technicalAccuracy || 0,
+            feedback.behavioralResponses || 0,
+            feedback.timeManagement || 0
+          ];
+          const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+          return sum + avgScore;
         }, 0);
 
         const averageScore = Math.round(totalScore / user.feedBack.length);
