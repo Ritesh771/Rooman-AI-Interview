@@ -109,6 +109,17 @@ const InterviewBody = ({ id, questions, startInterview, handleLastMessageChange,
             const result = await handleCompleteInterviewAction(completeInterviewData);
             if (result.success) {
                 console.log("Interview completed successfully");
+
+                // Check if there's a next interview in sequence
+                if (result.nextInterview) {
+                    console.log("Redirecting to next interview:", result.nextInterview);
+                    // Redirect to next interview
+                    window.location.href = `/interview/${result.nextInterview.id}`;
+                    return;
+                }
+
+                // No next interview, redirect to dashboard or show completion message
+                window.location.href = '/dashboard';
             } else {
                 console.error("Failed to complete interview:", result.error);
             }

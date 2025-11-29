@@ -53,6 +53,7 @@ export async function POST(req: NextRequest) {
       difficultyLevel,
       noOfQuestions,
       userId,
+      company,
     } = await req.json();
 
     console.log("Gemini API received:", { type, name, role });
@@ -188,6 +189,7 @@ export async function POST(req: NextRequest) {
       noOfQuestions: noOfQuestions,
       userId: userId as string,
       isCompleted: false,
+      company: company as string,
       // Store the Gemini interview data as JSON
       questions: geminiInterview,
     });

@@ -184,6 +184,7 @@ export async function POST(req: NextRequest) {
       difficultyLevel,
       noOfQuestions,
       userId,
+      company,
     } = await req.json();
 
     // Generate coding challenges using Google Gemini
@@ -258,7 +259,8 @@ export async function POST(req: NextRequest) {
       } catch (parseError) {
         console.error("Error parsing generated challenges:", parseError);
         console.error("Raw response:", generatedChallenges);
-        throw new Error("Failed to parse generated challenges");
+        // Use fallback if parsing fails
+        challenges = generateFallbackCodingChallenges(noOfQuestions, difficultyLevel);
       }
     } catch (apiError: any) {
       console.error("Gemini API quota exceeded for coding interview, using fallback challenges:", apiError.message);
@@ -288,6 +290,7 @@ export async function POST(req: NextRequest) {
       noOfQuestions: noOfQuestions,
       userId: userId as string,
       isCompleted: false,
+      company: company as string,
       // Store the coding interview data as JSON
       questions: codingInterview as any,
     });

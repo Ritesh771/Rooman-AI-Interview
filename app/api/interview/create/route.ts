@@ -13,6 +13,7 @@ export async function POST(req: Request) {
     experience,
     noOfQuestions,
     userId,
+    company,
   } = await req.json();
 
   try {
@@ -63,7 +64,7 @@ export async function POST(req: Request) {
       questions = generateFallbackVoiceQuestions(type, noOfQuestions, role, experience, difficultyLevel);
     }
 
-    await createInterview({
+    const createdInterview = await createInterview({
       name,
       role,
       type,
@@ -73,10 +74,11 @@ export async function POST(req: Request) {
       noOfQuestions,
       userId,
       isCompleted: false,
+      company,
       questions,
     });
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success: true, id: createdInterview.id }, { status: 200 });
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json({ success: false, error: error }, { status: 500 });

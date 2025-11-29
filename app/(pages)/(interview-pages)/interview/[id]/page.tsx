@@ -10,8 +10,11 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/interview/get/${interviewId}`)
   const data = await response.json();
   
+  // Add the interview id to the data
+  const interviewData = { ...data, id: interviewId };
+  
   // Check if this is a coding interview by checking if it has challenges
-  if (data && data.questions && typeof data.questions === 'object' && !Array.isArray(data.questions) && data.questions.challenges) {
+  if (interviewData && interviewData.questions && typeof interviewData.questions === 'object' && !Array.isArray(interviewData.questions) && interviewData.questions.challenges) {
     return (
       <div>
         <CodingInterviewPage params={Promise.resolve({ id: interviewId })} />
@@ -19,8 +22,8 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     );
   }
   
-  // Check if this is a Gemini interview by checking the type
-  if (data && data.type && data.type.startsWith('gemini-')) {
+  // Check if this is a Gemini/aptitude interview by checking the type
+  if (interviewData && interviewData.type && (interviewData.type.startsWith('gemini-') || interviewData.type === 'aptitude')) {
     return (
       <div>
         <GeminiInterviewPage params={Promise.resolve({ id: interviewId })} />
@@ -29,7 +32,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   }
   
   return (
-    <InterviewContent {...data} />
+    <InterviewContent {...interviewData} />
   );
 };
 

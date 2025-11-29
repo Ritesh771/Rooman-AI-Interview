@@ -62,7 +62,7 @@ export default function CodingInterviewPage({ params }: { params: Promise<{ id: 
         
         // Extract the coding interview data from the questions field
         if (data.questions && typeof data.questions === 'object' && data.questions.challenges) {
-          setInterviewData(data.questions);
+          setInterviewData({ ...data.questions, company: data.company });
         } else {
           throw new Error("Invalid coding interview data structure");
         }
@@ -75,6 +75,41 @@ export default function CodingInterviewPage({ params }: { params: Promise<{ id: 
 
     fetchInterviewData();
   }, [interviewId]);
+
+  const checkNextCompanyInterview = async (currentId: string, company: string) => {
+    try {
+      // First get the current interview to determine its type
+      const currentResponse = await fetch(`/api/interview/get/${currentId}`);
+      if (!currentResponse.ok) return { nextInterview: null };
+
+      const currentInterview = await currentResponse.json();
+      if (!currentInterview.company || currentInterview.company !== company) {
+        return { nextInterview: null };
+      }
+
+      // Get all interviews for this company
+      const response = await fetch(`/api/interview/getall?company=${encodeURIComponent(company)}`);
+      if (!response.ok) return { nextInterview: null };
+
+      const interviews = await response.json();
+      const sequence = ['gemini-aptitude', 'coding', 'voice'];
+      const currentTypeIndex = sequence.indexOf(currentInterview.type);
+
+      if (currentTypeIndex === -1 || currentTypeIndex === sequence.length - 1) {
+        return { nextInterview: null };
+      }
+
+      const nextType = sequence[currentTypeIndex + 1];
+      const nextInterview = interviews.find((interview: any) =>
+        interview.type === nextType && !interview.isCompleted
+      );
+
+      return { nextInterview: nextInterview || null };
+    } catch (error) {
+      console.error('Error checking next interview:', error);
+      return { nextInterview: null };
+    }
+  };
 
   const handleInterviewComplete = async (results: InterviewResults) => {
     try {
@@ -92,6 +127,21 @@ export default function CodingInterviewPage({ params }: { params: Promise<{ id: 
 
       if (!response.ok) {
         throw new Error("Failed to save interview results");
+      }
+
+      // Check if this is part of a company interview sequence
+      const nextInterviewResponse = await fetch(`/api/interview/get/${interviewId}`);
+      if (nextInterviewResponse.ok) {
+        const interviewData = await nextInterviewResponse.json();
+        if (interviewData.company) {
+          // Check for next interview in sequence
+          const sequenceCheck = await checkNextCompanyInterview(interviewId, interviewData.company);
+          if (sequenceCheck.nextInterview) {
+            // Redirect to next interview
+            window.location.href = `/interview/${sequenceCheck.nextInterview.id}`;
+            return;
+          }
+        }
       }
 
       // Show completion screen with results

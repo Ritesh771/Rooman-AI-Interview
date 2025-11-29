@@ -9,11 +9,21 @@ export async function GET(req: NextRequest) {
   if (!userId) {
     return NextResponse.json({ error: "Missing userId" }, { status: 400 });
   }
+
+  const { searchParams } = new URL(req.url);
+  const companyFilter = searchParams.get('company');
+
   try {
     const interviews = await getInterviewsByUserId(userId);
 
+    // Filter by company if specified
+    let filteredInterviews = interviews;
+    if (companyFilter) {
+      filteredInterviews = interviews.filter((interview: any) => interview.company === companyFilter);
+    }
+
     // Transform the data to match the expected format
-    const transformedInterviews = interviews.map((interview: any) => {
+    const transformedInterviews = filteredInterviews.map((interview: any) => {
       // Convert createdAt to a proper Date object
       let createdAt: Date;
       if (interview.createdAt?.toDate) {

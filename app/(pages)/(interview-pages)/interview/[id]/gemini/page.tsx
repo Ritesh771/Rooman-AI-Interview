@@ -52,6 +52,41 @@ export default function GeminiInterviewPage({ params }: { params: Promise<{ id: 
   const [timeRemaining, setTimeRemaining] = useState(0); // Will be set based on number of questions
   const [interviewId, setInterviewId] = useState<string>("");
 
+  const checkNextCompanyInterview = async (currentId: string, company: string) => {
+    try {
+      // First get the current interview to determine its type
+      const currentResponse = await fetch(`/api/interview/get/${currentId}`);
+      if (!currentResponse.ok) return { nextInterview: null };
+
+      const currentInterview = await currentResponse.json();
+      if (!currentInterview.company || currentInterview.company !== company) {
+        return { nextInterview: null };
+      }
+
+      // Get all interviews for this company
+      const response = await fetch(`/api/interview/getall?company=${encodeURIComponent(company)}`);
+      if (!response.ok) return { nextInterview: null };
+
+      const interviews = await response.json();
+      const sequence = ['gemini-aptitude', 'coding', 'voice'];
+      const currentTypeIndex = sequence.indexOf(currentInterview.type);
+
+      if (currentTypeIndex === -1 || currentTypeIndex === sequence.length - 1) {
+        return { nextInterview: null };
+      }
+
+      const nextType = sequence[currentTypeIndex + 1];
+      const nextInterview = interviews.find((interview: any) =>
+        interview.type === nextType && !interview.isCompleted
+      );
+
+      return { nextInterview: nextInterview || null };
+    } catch (error) {
+      console.error('Error checking next interview:', error);
+      return { nextInterview: null };
+    }
+  };
+
   useEffect(() => {
 
     const fetchInterviewData = async () => {
@@ -76,7 +111,7 @@ export default function GeminiInterviewPage({ params }: { params: Promise<{ id: 
           interview = data;
         }
         
-        setInterviewData(interview);
+        setInterviewData({ ...interview, company: data.company });
         
         // Set timer based on number of questions (2 minutes per question)
         const noOfQuestions = interview.noOfQuestions || 5;
@@ -209,6 +244,16 @@ export default function GeminiInterviewPage({ params }: { params: Promise<{ id: 
       }
       
       setEvaluation(result.evaluation);
+
+      // Check if this is part of a company interview sequence
+      if (interviewData.company) {
+        const sequenceCheck = await checkNextCompanyInterview(interviewId, interviewData.company);
+        if (sequenceCheck.nextInterview) {
+          // Redirect to next interview
+          router.push(`/interview/${sequenceCheck.nextInterview.id}`);
+          return;
+        }
+      }
     } catch (error: any) {
       console.error("Error submitting interview:", error);
       setError(error.message);
