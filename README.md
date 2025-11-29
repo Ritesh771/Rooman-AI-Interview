@@ -24,7 +24,7 @@ A modern AI-powered interview platform that simulates real job interviews using 
 - **Frontend**: Next.js, React, TypeScript
 - **Styling**: Tailwind CSS, shadcn/ui
 - **Backend**: Firebase (Authentication, Firestore)
-- **AI Services**: VAPI (Voice Assistant), Google Gemini (Feedback Generation)
+- **AI Services**: Google Gemini (Feedback Generation)
 - **Validation**: Zod
 - **Code Platform**: Monaco Editor, WebSocket for real-time collaboration
 
@@ -39,7 +39,6 @@ This project now uses Firebase as the sole database backend, replacing SQLite/Pr
 - Node.js (v18 or higher)
 - npm or yarn
 - Firebase account
-- VAPI API key
 - Google Gemini API key
 
 ### Installation
@@ -60,6 +59,14 @@ This project now uses Firebase as the sole database backend, replacing SQLite/Pr
 3. **Environment Setup**
    Create a `.env.local` file in the root directory and add the following variables:
    ```env
+   # NextAuth Configuration
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your_nextauth_secret
+
+   # Google OAuth (for authentication)
+   AUTH_GOOGLE_ID=your_google_oauth_client_id
+   AUTH_GOOGLE_SECRET=your_google_oauth_client_secret
+
    # Firebase Configuration
    NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
@@ -67,24 +74,35 @@ This project now uses Firebase as the sole database backend, replacing SQLite/Pr
    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
    NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+   NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
 
-   # VAPI Configuration
-   VAPI_API_KEY=your_vapi_api_key
+   # Firebase Admin (for server-side operations)
+   FIREBASE_PROJECT_ID=your_project_id
+   FIREBASE_CLIENT_EMAIL=your_firebase_client_email
+   FIREBASE_PRIVATE_KEY=your_firebase_private_key
+
+   # VAPI Configuration (for voice features)
+   NEXT_PUBLIC_VAPI_TOKEN=your_vapi_api_key
 
    # Google Gemini Configuration
    GOOGLE_GEMINI_API_KEY=your_gemini_api_key
+
+   # Base URL (optional, for production)
+   NEXT_PUBLIC_BASE_URL=http://localhost:3000
    ```
 
 4. **Firebase Setup**
    - Create a Firebase project at [Firebase Console](https://console.firebase.google.com)
-   - Enable Authentication with Email/Password provider
+   - Enable Authentication with Email/Password and Google providers
    - Set up Firestore Database
-   - Copy the config values to your `.env.local`
+   - Generate a service account key for admin operations
+   - Copy the config values and service account details to your `.env.local`
 
-5. **VAPI Setup**
-   - Sign up at [VAPI](https://vapi.ai)
-   - Get your API key from the dashboard
-   - Configure voice assistants for interviews
+5. **Google OAuth Setup**
+   - Go to [Google Cloud Console](https://console.cloud.google.com)
+   - Create OAuth 2.0 credentials
+   - Add authorized redirect URIs: `http://localhost:3000/api/auth/callback/google`
+   - Copy client ID and secret to your `.env.local`
 
 6. **Google Gemini Setup**
    - Get API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
@@ -141,7 +159,6 @@ graph TB
     G --> L[Real-time Code Editor]
 
     subgraph "External Services"
-        E
         F
     end
 
@@ -162,8 +179,37 @@ The application follows a modern web architecture with:
 - **Frontend Layer**: Next.js handles routing, UI components, and client-side logic
 - **Authentication Layer**: Firebase Auth manages user sessions and security
 - **Data Layer**: Firestore stores interview data, user profiles, and transcripts
-- **AI Layer**: VAPI provides voice interaction, Gemini generates intelligent feedback
+- **AI Layer**: Google Gemini generates intelligent feedback
 - **Real-time Layer**: WebSocket connections enable collaborative coding
+
+## Screenshots
+
+### Landing Page
+![Landing Page](/images/landing%20page.png)
+![Landing Page 2](/images/landing%20page2.png)
+
+### Authentication
+![Login Page](/images/login%20page%20.png)
+
+### Dashboard & Interview Management
+![Dashboard](/images/dashboard.png)
+![Create Interview](/images/create%20interview.png)
+![Interview History](/images/interview%20history.png)
+
+### Interview Types
+
+#### Voice Interview
+![Voice Interview](/images/voice%20interview.png)
+
+#### Coding Interview
+![Coding Terminal](/images/coding%20terminal.png)
+![Coding Question](/images/coding%20question.png)
+
+#### AI Resume Scoring
+![AI Resume Score](/images/ai%20resume%20score.png)
+
+### Profile & Resume
+![Profile Resume](/images/profile%20resume.png)
 
 ## How to Test
 
@@ -228,35 +274,6 @@ The application follows a modern web architecture with:
 - Add offline capabilities
 - Implement real-time notifications
 - Add data export features
-
-## Screenshots
-
-### Landing Page
-![Landing Page](/images/landing%20page.png)
-![Landing Page 2](/images/landing%20page2.png)
-
-### Authentication
-![Login Page](/images/login%20page%20.png)
-
-### Dashboard & Interview Management
-![Dashboard](/images/dashboard.png)
-![Create Interview](/images/create%20interview.png)
-![Interview History](/images/interview%20history.png)
-
-### Interview Types
-
-#### Voice Interview
-![Voice Interview](/images/voice%20interview.png)
-
-#### Coding Interview
-![Coding Terminal](/images/coding%20terminal.png)
-![Coding Question](/images/coding%20question.png)
-
-#### AI Resume Scoring
-![AI Resume Score](/images/ai%20resume%20score.png)
-
-### Profile & Resume
-![Profile Resume](/images/profile%20resume.png)
 
 ## Contributing
 
