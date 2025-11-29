@@ -1,6 +1,6 @@
 "use client";
 import { handleCompleteInterviewAction } from "@/app/lib/form-actions";
-import { vapi } from "@/app/lib/vapi.sdk";
+import { vapi } from "@/lib/vapi.sdk";
 import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -15,7 +15,7 @@ export interface SavedMessage {
 
 type CompleteInterviewType = {
     id: string,
-    conservation: SavedMessage[];
+    conversation: SavedMessage[];
     userid: string | undefined;
 }
 
@@ -143,7 +143,7 @@ const InterviewBody = ({ id, questions, startInterview, handleLastMessageChange,
         const completeInterviewData: CompleteInterviewType = {
             id: id,
             userid: session.data?.user?.id,
-            conservation: savedMessage
+            conversation: savedMessage
         }
 
         startTransition(() => {

@@ -1,6 +1,6 @@
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 // Define the structure for a coding challenge
 interface CodingChallenge {
@@ -97,10 +97,10 @@ export async function POST(req: NextRequest) {
       throw new Error("Failed to parse generated challenges");
     }
 
-    return Response.json(challenges, { status: 200 });
+    return NextResponse.json(challenges, { status: 200 });
   } catch (error) {
     console.error("Error generating coding challenges:", error);
-    return Response.json(
+    return NextResponse.json(
       { error: "Failed to generate coding challenges" }, 
       { status: 500 }
     );

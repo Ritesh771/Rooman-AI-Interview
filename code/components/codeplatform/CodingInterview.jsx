@@ -8,7 +8,8 @@ const CodingInterview = ({ interviewData, onComplete }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [testResults, setTestResults] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(0); // Will be set based on number of challenges
+    const [timeLeft, setTimeLeft] = useState(null); // Will be set based on number of challenges
+    const [totalTime, setTotalTime] = useState(null); // Store total time for progress bar
     const [scores, setScores] = useState([]);
     const [roomId, setRoomId] = useState("interview-" + Date.now());
     
@@ -22,25 +23,47 @@ const CodingInterview = ({ interviewData, onComplete }) => {
             const numChallenges = interviewData.challenges.length;
             const totalTime = numChallenges * 8 * 60; // 8 minutes per challenge in seconds
             setTimeLeft(totalTime);
+            setTotalTime(totalTime);
         }
     }, [interviewData]);
     
-    // Timer effect
+    const timerRef = useRef(null);
+    const hasStartedTimer = useRef(false);
+    
+    // Start timer when timeLeft is first set to a positive value
     useEffect(() => {
-        if (timeLeft <= 0) {
-            completeInterview();
-            return;
+        if (timeLeft && timeLeft > 0 && !hasStartedTimer.current) {
+            hasStartedTimer.current = true;
+
+            timerRef.current = setInterval(() => {
+                setTimeLeft(prev => {
+                    if (!prev || prev <= 1) {
+                        completeInterview();
+                        if (timerRef.current) {
+                            clearInterval(timerRef.current);
+                            timerRef.current = null;
+                        }
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
         }
-        
-        const timer = setInterval(() => {
-            setTimeLeft(prev => prev - 1);
-        }, 1000);
-        
-        return () => clearInterval(timer);
-    }, [timeLeft]);
+    }, [timeLeft]); // Depend on timeLeft to start when it becomes positive
+
+    // Cleanup timer on unmount
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+            }
+        };
+    }, []);
     
     // Format time for display
     const formatTime = (seconds) => {
+        if (!seconds || seconds <= 0) return "00:00";
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -171,6 +194,12 @@ const CodingInterview = ({ interviewData, onComplete }) => {
     
     // Complete the interview
     const completeInterview = () => {
+        // Don't complete if no questions have been attempted
+        if (scores.length === 0) {
+            console.log("Interview completion prevented - no questions attempted yet");
+            return;
+        }
+        
         const totalScore = scores.reduce((sum, score) => sum + (score || 0), 0);
         const averageScore = scores.length > 0 ? Math.round(totalScore / scores.length) : 0;
         const passed = averageScore >= 70;
@@ -231,8 +260,7 @@ const CodingInterview = ({ interviewData, onComplete }) => {
                                     className="h-full rounded-full bg-rose-500 transition-all"
                                     style={{
                                         width: `${
-                                            ((30 * 60 - timeLeft) / (30 * 60)) *
-                                            100
+                                            totalTime ? ((totalTime - timeLeft) / totalTime) * 100 : 0
                                         }%`,
                                     }}
                                 />

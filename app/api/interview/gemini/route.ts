@@ -138,10 +138,10 @@ export async function POST(req: NextRequest) {
       questions: geminiInterview,
     });
 
-    return Response.json({ success: true, interview: createdInterview }, { status: 200 });
+    return NextResponse.json({ success: true, interview: createdInterview }, { status: 200 });
   } catch (error) {
-    console.error("Error creating Gemini interview:", error);
-    return Response.json({ success: false, error: error }, { status: 500 });
+    console.error("Error creating interview:", error);
+    return NextResponse.json({ success: false, error: error }, { status: 500 });
   }
 }
 
@@ -225,9 +225,9 @@ export async function PUT(req: NextRequest) {
     // Update interview status to completed
     await updateInterview(interviewId, { isCompleted: true });
 
-    return Response.json({ success: true, evaluation }, { status: 200 });
+    return NextResponse.json({ success: true, evaluation }, { status: 200 });
   } catch (error) {
-    console.error("Error evaluating Gemini interview:", error);
-    return Response.json({ success: false, error: error }, { status: 500 });
+    console.error("Error evaluating interview:", error);
+    return NextResponse.json({ success: false, error: error }, { status: 500 });
   }
 }

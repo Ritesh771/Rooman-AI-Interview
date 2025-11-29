@@ -3,7 +3,7 @@
 import React, {useEffect} from 'react';
 import Image from "next/image";
 import {Button} from "@/app/components/ui/button";
-import {vapi} from "@/app/lib/vapi.sdk";
+import {vapi} from "@/lib/vapi.sdk";
 
 
 interface SavedMessage {

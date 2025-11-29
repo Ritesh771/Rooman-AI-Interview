@@ -60,7 +60,7 @@ async function generateSkillTips(weakSkills: string[]) {
     }
     
     // Try to find JSON array in the text
-    const jsonMatch = cleanText.match(/\[.*\]/s);
+    const jsonMatch = cleanText.match(/\[[\s\S]*\]/);
     if (jsonMatch) {
       cleanText = jsonMatch[0];
     }

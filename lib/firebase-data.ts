@@ -1,6 +1,22 @@
 import { db } from "../firebase/admin";
 import { hashPassword } from "../app/lib/users";
 
+interface User {
+  id: string;
+  name: string | null;
+  email: string;
+  password: string | null;
+  image: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  summary: string | null;
+  workExperience: string | null;
+  projects: string | null;
+  skills: string | null;
+  education: string | null;
+  certifications: string | null;
+}
+
 // User operations
 export const createUser = async (userData: any) => {
   try {
@@ -212,7 +228,7 @@ export const getAllUsersWithFeedback = async () => {
   }
 };
 
-export const getUserByEmail = async (email: string) => {
+export const getUserByEmail = async (email: string): Promise<User | null> => {
   try {
     const usersRef = db.collection("users");
     const querySnapshot = await usersRef.where("email", "==", email).get();
@@ -223,7 +239,7 @@ export const getUserByEmail = async (email: string) => {
     
     const userDoc = querySnapshot.docs[0];
     const userData = userDoc.data();
-    return { id: userDoc.id, ...userData };
+    return { id: userDoc.id, ...userData } as User;
   } catch (error) {
     console.error("Error getting user by email:", error);
     return null;

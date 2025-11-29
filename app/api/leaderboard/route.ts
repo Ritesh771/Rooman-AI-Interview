@@ -6,6 +6,9 @@ export async function GET() {
     // Get leaderboard data - top 10 users by average mock interview score
     const leaderboardUsers: any[] = await getAllUsersWithFeedback();
 
+    // If no real data, return dummy data for testing
+   
+
     // Calculate average scores for each user and sort by score
     const leaderboardWithScores: any[] = leaderboardUsers
       .map((user: any) => {

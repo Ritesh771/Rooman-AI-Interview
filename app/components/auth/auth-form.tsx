@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { handleLoginUser, handleSignUpUser } from '@/app/(auth-pages)/lib/form-actions';
 import SocialAccount from '@/app/(auth-pages)/social/page';
-import { Label } from '@radix-ui/react-menubar';
+import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 
 

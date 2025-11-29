@@ -22,7 +22,7 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '1',
     name: 'Frontend Developer Mock',
-    createdAt: new Date('2025-08-01T10:30:00'),
+    createdAt: '2025-08-01T10:30:00',
     role: 'Frontend Developer',
     type: 'Mock',
     difficultyLevel: 'Medium',
@@ -32,7 +32,7 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '2',
     name: 'Backend Developer Practice',
-    createdAt: new Date('2025-08-02T15:00:00'),
+    createdAt: '2025-08-02T15:00:00',
     role: 'Backend Developer',
     type: 'Practice',
     difficultyLevel: 'Hard',
@@ -42,7 +42,7 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '3',
     name: 'Fullstack Developer Mock',
-    createdAt: new Date('2025-08-03T09:15:00'),
+    createdAt: '2025-08-03T09:15:00',
     role: 'Fullstack Developer',
     type: 'Mock',
     difficultyLevel: 'Easy',
@@ -52,7 +52,7 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '4',
     name: 'Data Analyst Practice',
-    createdAt: new Date('2025-08-04T14:45:00'),
+    createdAt: '2025-08-04T14:45:00',
     role: 'Data Analyst',
     type: 'Practice',
     difficultyLevel: 'Medium',
@@ -62,7 +62,7 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '5',
     name: 'Machine Learning Engineer Mock',
-    createdAt: new Date('2025-08-05T11:20:00'),
+    createdAt: '2025-08-05T11:20:00',
     role: 'Machine Learning Engineer',
     type: 'Mock',
     difficultyLevel: 'Hard',
@@ -72,7 +72,7 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '6',
     name: 'DevOps Engineer Practice',
-    createdAt: new Date('2025-08-06T13:50:00'),
+    createdAt: '2025-08-06T13:50:00',
     role: 'DevOps Engineer',
     type: 'Practice',
     difficultyLevel: 'Medium',
@@ -82,7 +82,7 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '7',
     name: 'UI/UX Designer Mock',
-    createdAt: new Date('2025-08-07T10:10:00'),
+    createdAt: '2025-08-07T10:10:00',
     role: 'UI/UX Designer',
     type: 'Mock',
     difficultyLevel: 'Easy',
@@ -92,7 +92,7 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '8',
     name: 'Cybersecurity Analyst Practice',
-    createdAt: new Date('2025-08-07T16:40:00'),
+    createdAt: '2025-08-07T16:40:00',
     role: 'Cybersecurity Analyst',
     type: 'Practice',
     difficultyLevel: 'Hard',
@@ -102,7 +102,7 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '9',
     name: 'Cloud Architect Mock',
-    createdAt: new Date('2025-08-08T12:00:00'),
+    createdAt: '2025-08-08T12:00:00',
     role: 'Cloud Architect',
     type: 'Mock',
     difficultyLevel: 'Medium',
@@ -112,7 +112,7 @@ export const interviewHistoryData: InterviewHistoryType[] = [
   {
     id: '10',
     name: 'Mobile App Developer Practice',
-    createdAt: new Date('2025-08-09T09:50:00'),
+    createdAt: '2025-08-09T09:50:00',
     role: 'Mobile App Developer',
     type: 'Practice',
     difficultyLevel: 'Easy',

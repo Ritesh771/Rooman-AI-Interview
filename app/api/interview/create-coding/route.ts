@@ -1,6 +1,6 @@
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createInterview } from "@/lib/firebase-data";
 
 // Define the structure for a coding challenge
@@ -137,9 +137,9 @@ export async function POST(req: NextRequest) {
       questions: codingInterview as any,
     });
 
-    return Response.json({ success: true, interview: createdInterview }, { status: 200 });
+    return NextResponse.json({ success: true, interview: createdInterview }, { status: 200 });
   } catch (error) {
     console.error("Error creating coding interview:", error);
-    return Response.json({ success: false, error: error }, { status: 500 });
+    return NextResponse.json({ success: false, error: error }, { status: 500 });
   }
 }

@@ -1,8 +1,9 @@
 import {generateText} from "ai";
 import {google} from "@ai-sdk/google";
+import { NextResponse } from "next/server";
 
 
-export async function POST (req:Request, res:Response) {
+export async function POST (req:Request) {
     const { type, role, level, techstack, amount, userid } = await req.json();
     try {
         const { text: questions } = await generateText({
@@ -32,9 +33,9 @@ export async function POST (req:Request, res:Response) {
         };
 
 
-        return Response.json({ success: true }, { status: 200 });
+        return NextResponse.json({ success: true }, { status: 200 });
     } catch (error) {
         console.error("Error:", error);
-        return Response.json({ success: false, error: error }, { status: 500 });
+        return NextResponse.json({ success: false, error: error }, { status: 500 });
     }
 }

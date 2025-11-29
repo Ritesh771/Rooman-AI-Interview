@@ -4,9 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const interviewID = (await params)?.id;
+  const { id: interviewID } = await context.params;
   if (!interviewID) {
     return NextResponse.json({ error: "Missing interviewID" }, { status: 400 });
   }

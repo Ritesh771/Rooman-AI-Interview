@@ -1,8 +1,9 @@
 import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import { createInterview } from "@/lib/firebase-data";
+import { NextResponse } from "next/server";
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
   const {
     name,
     type,
@@ -61,9 +62,9 @@ export async function POST(req: Request, res: Response) {
       ...interviewData,
     });
 
-    return Response.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error("Error:", error);
-    return Response.json({ success: false, error: error }, { status: 500 });
+    return NextResponse.json({ success: false, error: error }, { status: 500 });
   }
 }
