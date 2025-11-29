@@ -14,7 +14,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (data && data.questions && typeof data.questions === 'object' && !Array.isArray(data.questions) && data.questions.challenges) {
     return (
       <div>
-        <CodingInterviewPage params={{ id: interviewId }} />
+        <CodingInterviewPage params={Promise.resolve({ id: interviewId })} />
       </div>
     );
   }
@@ -23,7 +23,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (data && data.type && data.type.startsWith('gemini-')) {
     return (
       <div>
-        <GeminiInterviewPage params={{ id: interviewId }} />
+        <GeminiInterviewPage params={Promise.resolve({ id: interviewId })} />
       </div>
     );
   }

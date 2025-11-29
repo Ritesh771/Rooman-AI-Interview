@@ -8,7 +8,7 @@ const CodingInterview = ({ interviewData, onComplete }) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [testResults, setTestResults] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(null); // Will be set based on number of challenges
+    const [timeLeft, setTimeLeft] = useState(null); // Will be set based on difficulty of each challenge
     const [totalTime, setTotalTime] = useState(null); // Store total time for progress bar
     const [scores, setScores] = useState([]);
     const [roomId, setRoomId] = useState("interview-" + Date.now());
@@ -17,11 +17,22 @@ const CodingInterview = ({ interviewData, onComplete }) => {
     const manualInputRef = useRef("");
     const currentChallenge = interviewData.challenges[currentQuestionIndex];
     
-    // Set initial time based on number of challenges (8 minutes per challenge)
+    // Set initial time based on difficulty of each challenge
     useEffect(() => {
         if (interviewData && interviewData.challenges) {
-            const numChallenges = interviewData.challenges.length;
-            const totalTime = numChallenges * 8 * 60; // 8 minutes per challenge in seconds
+            const totalTime = interviewData.challenges.reduce((total, challenge) => {
+                // Calculate time based on difficulty
+                let minutesPerQuestion = 6; // Default to medium
+                if (challenge.difficulty === "Easy") {
+                    minutesPerQuestion = 5;
+                } else if (challenge.difficulty === "Medium") {
+                    minutesPerQuestion = 6;
+                } else if (challenge.difficulty === "Hard") {
+                    minutesPerQuestion = 8;
+                }
+                return total + (minutesPerQuestion * 60); // Convert to seconds
+            }, 0);
+
             setTimeLeft(totalTime);
             setTotalTime(totalTime);
         }
@@ -71,7 +82,7 @@ const CodingInterview = ({ interviewData, onComplete }) => {
     
     const normalizeOutput = (value) => {
         if (value === null || value === undefined) return "";
-        return value.toString().replace(/\r/g, "").trim();
+        return value.toString().trim();
     };
 
     const runManualExecution = async (code, language, stdin) => {
@@ -159,18 +170,87 @@ const CodingInterview = ({ interviewData, onComplete }) => {
     const submitCode = async (code, language) => {
         setIsRunning(true);
         setTestResults([]);
-        
+
         try {
-            // In a real implementation, this would evaluate against all test cases
-            // For now, we'll simulate evaluation
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // Simulate scoring
-            const score = Math.floor(Math.random() * 40) + 60; // 60-100 for demo
+            if (!currentChallenge) {
+                throw new Error("No current challenge found");
+            }
+
+            if (!currentChallenge.sampleTestCases || currentChallenge.sampleTestCases.length === 0) {
+                throw new Error("No test cases found for current challenge");
+            }
+
+            // Run only the first sample test case for UI display
+            const sampleTestCase = currentChallenge.sampleTestCases[0];
+            const result = await executeCode(language, code, sampleTestCase.input);
+            const actualOutput = normalizeOutput(result.run.stdout || result.run.output);
+            const expectedOutput = normalizeOutput(sampleTestCase.output);
+            const testCasePassed = !result.run.stderr && actualOutput === expectedOutput;
+
+            // Get AI evaluation for the code
+            let aiScore = 0;
+            let aiFeedback = "AI evaluation unavailable - using test case result";
+            let aiEvaluation = null;
+
+            try {
+                const aiEvaluationResponse = await fetch('/api/interview/code-evaluation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        code,
+                        language,
+                        problemTitle: currentChallenge.title,
+                        problemDescription: currentChallenge.description,
+                        testCasePassed,
+                        testInput: sampleTestCase.input,
+                        testOutput: actualOutput,
+                        expectedOutput: expectedOutput,
+                        actualOutput: actualOutput
+                    }),
+                });
+
+                if (aiEvaluationResponse.ok) {
+                    const aiResult = await aiEvaluationResponse.json();
+                    aiScore = aiResult.evaluation.score;
+                    aiFeedback = aiResult.evaluation.feedback;
+                    aiEvaluation = aiResult.evaluation;
+                } else {
+                    console.warn('AI evaluation failed, falling back to test case scoring');
+                    // Fallback: score based on test case result
+                    aiScore = testCasePassed ? 85 : 35; // Good score if test passes, low if fails
+                    aiFeedback = testCasePassed 
+                        ? "Test case passed - basic solution implemented correctly"
+                        : "Test case failed - solution needs improvement";
+                }
+            } catch (error) {
+                console.warn('AI evaluation error, falling back to test case scoring:', error);
+                // Fallback: score based on test case result
+                aiScore = testCasePassed ? 85 : 35;
+                aiFeedback = testCasePassed 
+                    ? "Test case passed - basic solution implemented correctly"
+                    : "Test case failed - solution needs improvement";
+            }
+
+            // Show only the sample test case result with AI feedback
+            const evaluationSummary = {
+                label: "AI Code Evaluation",
+                testCaseIndex: 0,
+                input: `Test Case: ${testCasePassed ? 'PASSED' : 'FAILED'}`,
+                expectedOutput: `AI Score: ${aiScore}%`,
+                actualOutput: aiFeedback,
+                passed: aiScore >= 70,
+                error: null,
+                aiEvaluation: aiEvaluation
+            };
+            setTestResults([evaluationSummary]);
+
+            // Update scores using AI score
             const newScores = [...scores];
-            newScores[currentQuestionIndex] = score;
+            newScores[currentQuestionIndex] = aiScore;
             setScores(newScores);
-            
+
             // Move to next question or complete interview
             if (currentQuestionIndex < interviewData.challenges.length - 1) {
                 setCurrentQuestionIndex(prev => prev + 1);
@@ -183,7 +263,7 @@ const CodingInterview = ({ interviewData, onComplete }) => {
                 testCaseIndex: 0,
                 input: "N/A",
                 expectedOutput: "N/A",
-                actualOutput: "Error occurred during submission",
+                actualOutput: "Error occurred during AI evaluation",
                 passed: false,
                 error: error.message || "Unknown error"
             }]);
@@ -289,13 +369,19 @@ const CodingInterview = ({ interviewData, onComplete }) => {
                                         begin coding.
                                     </p>
                                 </div>
-                                <span
-                                    className={`coding-interview-difficulty-pill ${getDifficultyColor(
-                                        currentChallenge.difficulty
-                                    )}`}
-                                >
-                                    {currentChallenge.difficulty}
-                                </span>
+                                <div className="flex items-center gap-3">
+                                    <span
+                                        className={`coding-interview-difficulty-pill ${getDifficultyColor(
+                                            currentChallenge.difficulty
+                                        )}`}
+                                    >
+                                        {currentChallenge.difficulty}
+                                    </span>
+                                    <span className="text-xs text-slate-500">
+                                        {currentChallenge.difficulty === "Easy" ? "5 min" :
+                                         currentChallenge.difficulty === "Medium" ? "6 min" : "8 min"} allocated
+                                    </span>
+                                </div>
                             </div>
                             <div className="coding-interview-scrollarea flex-1 overflow-y-auto px-6 py-6">
                                 <div className="space-y-6 text-slate-700">
@@ -328,7 +414,7 @@ const CodingInterview = ({ interviewData, onComplete }) => {
                                             Sample Test Cases
                                         </h3>
                                         <div className="space-y-4">
-                                            {currentChallenge.sampleTestCases.map(
+                                            {currentChallenge.sampleTestCases.slice(0, 1).map(
                                                 (testCase, index) => (
                                                     <div
                                                         key={index}
@@ -375,10 +461,10 @@ const CodingInterview = ({ interviewData, onComplete }) => {
                                 <div className="flex items-center justify-between border-b px-5 py-3">
                                     <div>
                                         <p className="text-sm font-semibold text-slate-900">
-                                            Sample Test Results
+                                            Test Case Result
                                         </p>
                                         <p className="text-xs text-slate-500">
-                                            Run tests to validate your solution
+                                            Run test to validate your solution
                                         </p>
                                     </div>
                                     <Button
@@ -393,14 +479,13 @@ const CodingInterview = ({ interviewData, onComplete }) => {
                                         }
                                         disabled={isRunning}
                                     >
-                                        {isRunning ? "Running..." : "Run Tests"}
+                                           {isRunning ? "Running..." : "Run Test"}
                                     </Button>
                                 </div>
                                 <div className="coding-interview-scrollbar h-full overflow-y-auto px-5 py-4">
                                     {testResults.length === 0 ? (
                                         <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
-                                            No results yet. Click “Run” to execute the
-                                            sample tests.
+                                            No result yet. Click "Run Test" to execute the test case.
                                         </div>
                                     ) : (
                                         <div className="space-y-3">

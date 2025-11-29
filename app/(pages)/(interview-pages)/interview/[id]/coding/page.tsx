@@ -37,17 +37,23 @@ interface InterviewResults {
   totalScore: number;
 }
 
-export default function CodingInterviewPage({ params }: { params: { id: string } }) {
+export default function CodingInterviewPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const [interviewData, setInterviewData] = useState<CodingInterviewData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [interviewId, setInterviewId] = useState<string>("");
+  const [completionResults, setCompletionResults] = useState<InterviewResults | null>(null);
+  const [showCompletion, setShowCompletion] = useState(false);
 
   useEffect(() => {
     const fetchInterviewData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/interview/get/${params.id}`);
+        const resolvedParams = await params;
+        const id = resolvedParams.id;
+        setInterviewId(id);
+        const response = await fetch(`/api/interview/get/${id}`);
         const data = await response.json();
         
         if (!response.ok) {
@@ -68,7 +74,7 @@ export default function CodingInterviewPage({ params }: { params: { id: string }
     };
 
     fetchInterviewData();
-  }, [params.id]);
+  }, [interviewId]);
 
   const handleInterviewComplete = async (results: InterviewResults) => {
     try {
@@ -79,7 +85,7 @@ export default function CodingInterviewPage({ params }: { params: { id: string }
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          interviewId: params.id,
+          interviewId: interviewId,
           results: results,
         }),
       });
@@ -88,9 +94,9 @@ export default function CodingInterviewPage({ params }: { params: { id: string }
         throw new Error("Failed to save interview results");
       }
 
-      // Show completion message and redirect to dashboard
-      alert(`Interview completed!\nAverage Score: ${results.averageScore}%\nStatus: ${results.passed ? 'Passed' : 'Failed'}`);
-      router.push("/dashboard");
+      // Show completion screen with results
+      setCompletionResults(results);
+      setShowCompletion(true);
     } catch (error) {
       console.error("Error saving interview results:", error);
       alert("Failed to save interview results. Please try again.");
@@ -133,6 +139,116 @@ export default function CodingInterviewPage({ params }: { params: { id: string }
         >
           Back to Dashboard
         </button>
+      </div>
+    );
+  }
+
+  if (showCompletion && completionResults) {
+    return (
+      <div style={{ 
+        minHeight: "100vh", 
+        backgroundColor: "#f5f5f5", 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "center",
+        padding: "2rem"
+      }}>
+        <div style={{ 
+          backgroundColor: "white", 
+          borderRadius: "12px", 
+          padding: "3rem", 
+          boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+          maxWidth: "500px",
+          width: "100%",
+          textAlign: "center"
+        }}>
+          <div style={{ 
+            fontSize: "4rem", 
+            marginBottom: "1rem" 
+          }}>
+            {completionResults.passed ? "🎉" : "📚"}
+          </div>
+          
+          <h1 style={{ 
+            fontSize: "2rem", 
+            fontWeight: "bold", 
+            color: "#1f2937",
+            marginBottom: "1rem" 
+          }}>
+            Interview Completed!
+          </h1>
+          
+          <div style={{ 
+            fontSize: "1.5rem", 
+            fontWeight: "600",
+            color: completionResults.passed ? "#10b981" : "#f59e0b",
+            marginBottom: "1rem"
+          }}>
+            Average Score: {completionResults.averageScore}%
+          </div>
+          
+          <div style={{ 
+            fontSize: "1.2rem", 
+            color: completionResults.passed ? "#10b981" : "#f59e0b",
+            marginBottom: "2rem",
+            fontWeight: "500"
+          }}>
+            Status: {completionResults.passed ? "PASSED" : "FAILED"}
+          </div>
+          
+          <div style={{ 
+            backgroundColor: "#f3f4f6", 
+            padding: "1.5rem", 
+            borderRadius: "8px",
+            marginBottom: "2rem"
+          }}>
+            <h3 style={{ 
+              fontSize: "1.1rem", 
+              fontWeight: "600", 
+              color: "#374151",
+              marginBottom: "1rem" 
+            }}>
+              Question Scores:
+            </h3>
+            <div style={{ 
+              display: "flex", 
+              flexWrap: "wrap", 
+              gap: "0.5rem",
+              justifyContent: "center"
+            }}>
+              {completionResults.scores.map((score, index) => (
+                <div key={index} style={{ 
+                  backgroundColor: score >= 70 ? "#d1fae5" : "#fef3c7",
+                  color: score >= 70 ? "#065f46" : "#92400e",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "6px",
+                  fontWeight: "500"
+                }}>
+                  Q{index + 1}: {score}%
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <button 
+            onClick={() => router.push("/dashboard")}
+            style={{ 
+              backgroundColor: "#3b82f6", 
+              color: "white", 
+              padding: "0.75rem 2rem", 
+              borderRadius: "8px",
+              border: "none",
+              fontSize: "1rem",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "background-color 0.2s"
+            }}
+            onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#2563eb"}
+            onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = "#3b82f6"}
+          >
+            Return to Dashboard
+          </button>
+        </div>
       </div>
     );
   }

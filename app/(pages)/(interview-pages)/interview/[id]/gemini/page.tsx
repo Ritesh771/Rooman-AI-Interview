@@ -12,10 +12,12 @@ import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 interface GeminiQuestion {
   id: string;
   question: string;
-  type: "technical" | "behavioral" | "system-design";
+  type: "technical" | "behavioral" | "system-design" | "aptitude";
   difficulty: "Easy" | "Medium" | "Hard";
   category: string;
   hints?: string[];
+  options?: string[]; // For multiple choice questions
+  correctAnswer?: string; // For multiple choice questions
 }
 
 interface InterviewResponse {
@@ -35,7 +37,7 @@ interface InterviewEvaluation {
   systemDesign: number;
 }
 
-export default function GeminiInterviewPage({ params }: { params: { id: string } }) {
+export default function GeminiInterviewPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const [interviewData, setInterviewData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -43,16 +45,22 @@ export default function GeminiInterviewPage({ params }: { params: { id: string }
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<InterviewResponse[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState("");
+  const [selectedOption, setSelectedOption] = useState<string>("");
   const [showHints, setShowHints] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [evaluation, setEvaluation] = useState<InterviewEvaluation | null>(null);
   const [timeRemaining, setTimeRemaining] = useState(0); // Will be set based on number of questions
+  const [interviewId, setInterviewId] = useState<string>("");
 
   useEffect(() => {
+
     const fetchInterviewData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/interview/get/${params.id}`);
+        const resolvedParams = await params;
+        const id = resolvedParams.id;
+        setInterviewId(id);
+        const response = await fetch(`/api/interview/get/${id}`);
         const data = await response.json();
         
         if (!response.ok) {
@@ -82,7 +90,7 @@ export default function GeminiInterviewPage({ params }: { params: { id: string }
     };
 
     fetchInterviewData();
-  }, [params.id]);
+  }, [interviewId]);
 
   // Timer effect
   useEffect(() => {
@@ -111,14 +119,16 @@ export default function GeminiInterviewPage({ params }: { params: { id: string }
   const handleNextQuestion = () => {
     if (currentQuestionIndex < (interviewData.questions?.length || 0) - 1) {
       // Save current response
+      const answer = currentQuestion.type === "aptitude" ? selectedOption : currentAnswer;
       const newResponse: InterviewResponse = {
         questionId: interviewData.questions[currentQuestionIndex].id,
         question: interviewData.questions[currentQuestionIndex].question,
-        answer: currentAnswer,
+        answer: answer,
       };
       
       setResponses([...responses, newResponse]);
       setCurrentAnswer("");
+      setSelectedOption("");
       setShowHints(false);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
@@ -132,21 +142,33 @@ export default function GeminiInterviewPage({ params }: { params: { id: string }
         r => r.questionId === interviewData.questions[currentQuestionIndex].id
       );
       
+      const answer = currentQuestion.type === "aptitude" ? selectedOption : currentAnswer;
+      
       if (existingResponseIndex !== -1) {
-        updatedResponses[existingResponseIndex].answer = currentAnswer;
+        updatedResponses[existingResponseIndex].answer = answer;
       } else {
         const newResponse: InterviewResponse = {
           questionId: interviewData.questions[currentQuestionIndex].id,
           question: interviewData.questions[currentQuestionIndex].question,
-          answer: currentAnswer,
+          answer: answer,
         };
         updatedResponses.push(newResponse);
       }
       
       setResponses(updatedResponses);
-      setCurrentAnswer(updatedResponses.find(r => 
-        r.questionId === interviewData.questions[currentQuestionIndex - 1].id
-      )?.answer || "");
+      const previousQuestion = interviewData.questions[currentQuestionIndex - 1];
+      const previousResponse = updatedResponses.find(r => 
+        r.questionId === previousQuestion.id
+      );
+      
+      if (previousQuestion.type === "aptitude" && previousQuestion.options) {
+        setSelectedOption(previousResponse?.answer || "");
+        setCurrentAnswer("");
+      } else {
+        setCurrentAnswer(previousResponse?.answer || "");
+        setSelectedOption("");
+      }
+      
       setShowHints(false);
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
@@ -155,10 +177,11 @@ export default function GeminiInterviewPage({ params }: { params: { id: string }
   const handleSubmitInterview = async () => {
     // Save current response
     const updatedResponses = [...responses];
+    const answer = currentQuestion.type === "aptitude" ? selectedOption : currentAnswer;
     const newResponse: InterviewResponse = {
       questionId: interviewData.questions[currentQuestionIndex].id,
       question: interviewData.questions[currentQuestionIndex].question,
-      answer: currentAnswer,
+      answer: answer,
     };
     updatedResponses.push(newResponse);
     setResponses(updatedResponses);
@@ -173,7 +196,7 @@ export default function GeminiInterviewPage({ params }: { params: { id: string }
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          interviewId: params.id,
+          interviewId: interviewId,
           responses: updatedResponses,
           userId: interviewData.userId || interviewData.user?.id,
         }),
@@ -404,17 +427,51 @@ export default function GeminiInterviewPage({ params }: { params: { id: string }
           )}
           
           <div className="mt-4">
-            <label htmlFor="answer" className="block text-sm font-medium mb-2">
-              Your Answer
-            </label>
-            <Textarea
-              id="answer"
-              value={currentAnswer}
-              onChange={(e) => setCurrentAnswer(e.target.value)}
-              placeholder="Type your answer here..."
-              rows={8}
-              className="w-full"
-            />
+            {currentQuestion.type === "aptitude" && currentQuestion.options ? (
+              <div>
+                <label className="block text-sm font-medium mb-3">
+                  Choose the correct answer:
+                </label>
+                <div className="space-y-2">
+                  {currentQuestion.options?.map((option: string, index: number) => (
+                    <div key={index} className="flex items-center">
+                      <input
+                        type="radio"
+                        id={`option-${index}`}
+                        name="answer"
+                        value={option}
+                        checked={selectedOption === option}
+                        onChange={(e) => setSelectedOption(e.target.value)}
+                        className="mr-3"
+                      />
+                      <label 
+                        htmlFor={`option-${index}`}
+                        className="cursor-pointer text-sm"
+                      >
+                        <span className="font-medium mr-2">
+                          {String.fromCharCode(65 + index)}.
+                        </span>
+                        {option}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <label htmlFor="answer" className="block text-sm font-medium mb-2">
+                  Your Answer
+                </label>
+                <Textarea
+                  id="answer"
+                  value={currentAnswer}
+                  onChange={(e) => setCurrentAnswer(e.target.value)}
+                  placeholder="Type your answer here..."
+                  rows={8}
+                  className="w-full"
+                />
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -432,13 +489,25 @@ export default function GeminiInterviewPage({ params }: { params: { id: string }
         </div>
         <div className="flex gap-3">
           {currentQuestionIndex < questions.length - 1 ? (
-            <Button onClick={handleNextQuestion}>
+            <Button 
+              onClick={handleNextQuestion}
+              disabled={
+                currentQuestion.type === "aptitude" 
+                  ? !selectedOption 
+                  : !currentAnswer.trim()
+              }
+            >
               Next Question
             </Button>
           ) : (
             <Button 
               onClick={handleSubmitInterview} 
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting || 
+                (currentQuestion.type === "aptitude" 
+                  ? !selectedOption 
+                  : !currentAnswer.trim())
+              }
               className="bg-green-600 hover:bg-green-700"
             >
               {isSubmitting ? (

@@ -39,9 +39,23 @@ export async function handleCreateInterviewFormAction(
     await CreateInterviewSchema.parseAsync(data);
 
     // Check if this is a coding interview
-    const interviewType = formData.get("interviewType") || "Regular";
-    const isCodingInterview = interviewType === "Coding";
-    const isGeminiInterview = interviewType === "Gemini";
+    const interviewType = formData.get("interviewType") || "Live Voice Interview";
+    const isCodingInterview = interviewType === "Coding Round";
+    const isGeminiInterview = interviewType === "Aptitude Round";
+    
+    console.log("Form data received:", {
+      interviewType,
+      type: formData.get("type"),
+      isGeminiInterview
+    });
+    
+    // For Gemini interviews (aptitude rounds), override the type to "aptitude"
+    const interviewData = {
+      ...data,
+      type: isGeminiInterview ? "aptitude" : data.type,
+    };
+    
+    console.log("Final interview data:", interviewData);
     
     // Determine which API endpoint to use
     let apiUrl;
@@ -58,7 +72,7 @@ export async function handleCreateInterviewFormAction(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(interviewData),
     });
 
     if (createInterviewRes.ok) {

@@ -74,8 +74,8 @@ const mockInterviewQuestions: (Question | Question[])[] = [
         label: "Interview Type",
         name: "interviewType",
         type: "select",
-        options: ["Regular", "Coding", "Gemini"],
-        defaultOption: "Regular",
+        options: ["Live Voice Interview", "Coding Round", "Aptitude Round"],
+        defaultOption: "Live Voice Interview",
     }
 ];
 
