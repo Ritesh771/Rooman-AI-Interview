@@ -19,7 +19,7 @@ A modern AI-powered interview platform that simulates real job interviews using 
 
 Live Demo. play the demo video there
 
-[Video Demo](https://drive.google.com/file/d/1Tm2rxqgJbbHoN04KDznle4b8NySN9p9I/view?usp=sharing)
+[Video Demo](https://drive.google.com/file/d/12PUsjGajiydy0tNc434qE43gvXhzpCPv/view?usp=sharing)
 
 ## Tech Stack
 
